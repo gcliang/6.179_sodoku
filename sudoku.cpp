@@ -20,8 +20,8 @@ class SudokuInvariantException : public exception {
 class Unit {
 	private:
 		int value;
-		Row *row;
-		Column *column;
+		int row;
+		int column;
 		Section *section;
 	
 	public:
@@ -29,7 +29,9 @@ class Unit {
 			value = 0;
 		}
 
-		Unit(int val) {
+		Unit(int r, int c, int val) {
+			row = r;
+			column = c;
 			value = val;
 		}
 
@@ -41,17 +43,17 @@ class Unit {
 			value = val;
 		}
 
-		Row *getRow() {
-			return row;
-		}
+		// Row *getRow() {
+		// 	return row;
+		// }
 
-		Column *getColumn() {
-			return column;
-		}
+		// Column *getColumn() {
+		// 	return column;
+		// }
 
-		Section *getSection() {
-			return section;
-		}
+		// Section *getSection() {
+		// 	return section;
+		// }
 };
 
 class Row {
@@ -60,6 +62,13 @@ class Row {
 		set<int> values;
 	
 	public:
+		Row() {
+			int i;
+			for (i = 0; i < N; i++) {
+				units[i] = NULL;
+			}
+		}
+
 		// Unit *getUnits() {
 		// 	return units;
 		// }
@@ -95,6 +104,13 @@ class Column {
 		set<int> values;
 	
 	public:
+		Column() {
+			int i;
+			for (i = 0; i < N; i++) {
+				units[i] = NULL;
+			}
+		}
+
 		// Unit *getUnits() {
 		// 	return units;
 		// }
@@ -130,6 +146,16 @@ class Section {
 		set<int> values;
 	
 	public:
+		Section() {
+			int i;
+			for (i = 0; i < N; i++) {
+				int j;
+				for (j = 0; j < N; j++) {
+					units[i][j] = NULL;
+				}
+			}
+		}
+
 		// Unit *getUnits() {
 		// 	return units;
 		// }
@@ -163,8 +189,28 @@ class Sudoku {
 	private:
 		Row *rows[N];
 		Column *columns[N];
-		Section *sections[N];
+		Section ***sections;
 		Unit ***board;
+
+		void setRows() {
+			int i;
+			for (i = 0; i < N; i++) {
+				Row row = new Row();
+				int j;
+				for (j = 0; j < N; j++) {
+					row->insert;
+					rows[i]->insert(j, (*board)[i][j]);
+				}
+			}
+		}
+
+		void setColumns() {
+			
+		}
+
+		void setSections() {
+
+		}
 	
 	public:
 		Sudoku(int (*intBoard)[N][N]) {
@@ -172,7 +218,7 @@ class Sudoku {
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
-					board[i][j] = new Unit((*intBoard)[i][j]);
+					board[i][j] = new Unit(i, j, (*intBoard)[i][j]);
 				}
 			}
 			setRows();
@@ -184,24 +230,12 @@ class Sudoku {
 			return rows;
 		}
 
-		void setRows() {
-
-		}
-
 		Column **getColumns() {
 			return columns;
 		}
 
-		void setColumns() {
-
-		}
-
-		Section **getSections() {
+		Section ***getSections() {
 			return sections;
-		}
-
-		void setSections() {
-
 		}
 
 		Unit ***getBoard() {
@@ -209,7 +243,9 @@ class Sudoku {
 		}
 
 		void insert(int x, int y, int value) {
+			if (x > N or y > N) {
 
+			}
 		}
 
 		bool isValid(int x, int y, int value) {
