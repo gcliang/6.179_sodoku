@@ -164,38 +164,47 @@ class Sudoku {
 		Row *rows[N];
 		Column *columns[N];
 		Section *sections[N];
-		Unit *board[N][N];
+		Unit ***board;
 	
 	public:
-		Sudoku(int *board[N][N]) {
-			
+		Sudoku(int (*intBoard)[N][N]) {
+			int i;
+			for (i = 0; i < N; i++) {
+				int j;
+				for (j = 0; j < N; j++) {
+					board[i][j] = new Unit((*intBoard)[i][j]);
+				}
+			}
+			setRows();
+			setColumns();
+			setSections();
 		}
 
-		Row *getRows() {
-
+		Row **getRows() {
+			return rows;
 		}
 
 		void setRows() {
 
 		}
 
-		Column *getColumns() {
-			
+		Column **getColumns() {
+			return columns;
 		}
 
 		void setColumns() {
 
 		}
 
-		Section *getSections() {
-			
+		Section **getSections() {
+			return sections;
 		}
 
 		void setSections() {
-			
+
 		}
 
-		Unit *getBoard() {
+		Unit ***getBoard() {
 			return board;
 		}
 
@@ -204,7 +213,7 @@ class Sudoku {
 		}
 
 		bool isValid(int x, int y, int value) {
-
+			return true;
 		}
 
 		void displayBoard() {
@@ -212,7 +221,7 @@ class Sudoku {
 		}
 
 		bool isComplete() {
-
+			return true;
 		}
 };
 
