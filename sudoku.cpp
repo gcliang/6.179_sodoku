@@ -60,20 +60,20 @@ class Row {
 		set<int> values;
 	
 	public:
-		Unit *getUnits() {
-			return units;
-		}
+		// Unit *getUnits() {
+		// 	return units;
+		// }
 
-		void insert(int position, int value) {
-			if (units[position] != NULL) {
-				units[position]->setValue(value);
+		void insert(int x, int value) {
+			if (units[x] != NULL) {
+				units[x]->setValue(value);
 			} else {
-				units[position] = new Unit(value);
+				units[x] = new Unit(value);
 			}
 			values.insert(value);
 		}
 
-		bool isValid(int position, int value) {
+		bool isValid(int x, int value) {
   			set<int>::iterator it;
   			bool hasValue = false;
   			for (it=values.begin(); it!=values.end(); ++it) {
@@ -83,7 +83,7 @@ class Row {
   				}
   			}
 			if (hasValue) {
-				return units[position]->getValue() == value;
+				return units[x]->getValue() == value;
 			}
 			return true;
 		}
@@ -95,20 +95,20 @@ class Column {
 		set<int> values;
 	
 	public:
-		Unit *getUnits() {
-			return units;
-		}
+		// Unit *getUnits() {
+		// 	return units;
+		// }
 
-		void insert(int position, int value) {
-			if (units[position] != NULL) {
-				units[position]->setValue(value);
+		void insert(int y, int value) {
+			if (units[y] != NULL) {
+				units[y]->setValue(value);
 			} else {
-				units[position] = new Unit(value);
+				units[y] = new Unit(value);
 			}
 			values.insert(value);
 		}
 
-		bool isValid(int position, int value) {
+		bool isValid(int y, int value) {
   			set<int>::iterator it;
   			bool hasValue = false;
   			for (it=values.begin(); it!=values.end(); ++it) {
@@ -118,7 +118,7 @@ class Column {
   				}
   			}
 			if (hasValue) {
-				return units[position]->getValue() == value;
+				return units[y]->getValue() == value;
 			}
 			return true;
 		}
@@ -126,24 +126,24 @@ class Column {
 
 class Section {
 	private:
-		Unit *units[N];
+		Unit *units[N][N];
 		set<int> values;
 	
 	public:
-		Unit *getUnits() {
-			return units;
-		}
+		// Unit *getUnits() {
+		// 	return units;
+		// }
 
-		void insert(int position, int value) {
-			if (units[position] != NULL) {
-				units[position]->setValue(value);
+		void insert(int x, int y, int value) {
+			if (units[y][x] != NULL) {
+				units[y][x]->setValue(value);
 			} else {
-				units[position] = new Unit(value);
+				units[y][x] = new Unit(value);
 			}
 			values.insert(value);
 		}
 
-		bool isValid(int position, int value) {
+		bool isValid(int x, int y, int value) {
   			set<int>::iterator it;
   			bool hasValue = false;
   			for (it=values.begin(); it!=values.end(); ++it) {
@@ -153,14 +153,67 @@ class Section {
   				}
   			}
 			if (hasValue) {
-				return units[position]->getValue() == value;
+				return units[y][x]->getValue() == value;
 			}
 			return true;
 		}
 };
 
 class Sudoku {
+	private:
+		Row *rows[N];
+		Column *columns[N];
+		Section *sections[N];
+		Unit *board[N][N];
+	
+	public:
+		Sudoku(int *board[N][N]) {
+			
+		}
 
+		Row *getRows() {
+
+		}
+
+		void setRows() {
+
+		}
+
+		Column *getColumns() {
+			
+		}
+
+		void setColumns() {
+
+		}
+
+		Section *getSections() {
+			
+		}
+
+		void setSections() {
+			
+		}
+
+		Unit *getBoard() {
+			return board;
+		}
+
+		void insert(int x, int y, int value) {
+
+		}
+
+		bool isValid(int x, int y, int value) {
+
+		}
+
+		void displayBoard() {
+
+		}
+
+		bool isComplete() {
+
+		}
 };
 
 int main() {
