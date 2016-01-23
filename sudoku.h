@@ -1,2 +1,16 @@
-class Sodoku {
-}
+class Unit;
+int getValue();
+void setValue(int val);
+void getRow();
+void getColumn();
+void getSection();
+class Row;
+std::map<int, Unit *> getUnits();
+void insert(int position, int value);
+bool isValid(int position, int value);
+class Column;
+std::map<int, Unit *> getUnits();
+void insert(int position, int value);
+bool isValid(int position, int value);
+class Section;
+class Sudoku;
