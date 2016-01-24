@@ -18,14 +18,14 @@ const int COMPLETED_BOARDS = 3;
 class OutOfBoundsException : public exception {
 public:
 	virtual const char* what() const throw() {
-		return "That position is out of bounds!";
+		return "That position is out of bounds! Please try again.";
 	}
 } outOfBoundsException;
 
 class SudokuInvariantException : public exception {
 public:
 	virtual const char* what() const throw() {
-		return "That move violates the Sudoku invariant. Try again!";
+		return "That move violates the Sudoku invariant! Please try again.";
 	}
 } sudokuInvariantException;
 
@@ -297,7 +297,7 @@ class Sudoku {
 			} else if (!isValid(x, y, value)) {
 				throw sudokuInvariantException;
 			}
-			// TODO: INSERT INTO APPROPRIATE ROW, COLUMN, AND SECTION
+			board[y * N + x]->setValue(value);
 		}
 
 		bool isValid(int x, int y, int value) {
@@ -311,6 +311,15 @@ class Sudoku {
 		}
 
 		bool isComplete() {
+			int i;
+			for (i = 0; i < N; i++) {
+				int j;
+				for (j = 0; j < N; j++) {
+					if (board[i * N + j]->getValue() == 0) {
+						return false;
+					}
+				}
+			}
 			return true;
 		}
 };
@@ -399,15 +408,19 @@ int main() {
 
 	Sudoku *mainBoard = new Sudoku(chosen);
 
+	cout << "Sudoku constructed\n";
+
 	// randomly remove numbers to reach initial state
 	int row, d;
 	int empty = 0;
 	Row *current;
 	for (row = 0; row < N; row++) {
+		cout << "Random outer for loop" << '\n';
 		current = mainBoard->getRows()[row];
 		int removed[diff];
 		int col;
 		for (d = 0; d < diff; d++) {
+			cout << "Random inner for loop" << '\n';
 			col = rand() % N;
 			int * found;
 			found = find(removed, removed+diff, col);
