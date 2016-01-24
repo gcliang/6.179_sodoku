@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <math.h>
 #include <set>
+#include <ctime>
 #include "sudoku.h"
 
 using namespace std;
@@ -344,13 +345,13 @@ void print_board(Sudoku *board) {
 
 int main() {
 	// Determine desired difficulty
-	cout << "Welcome to Sudoku.  What is your desired difficulty? \n" << "The options are easy, medium, and hard.\n";
+	cout << "Welcome to Sudoku.  What is your desired difficulty?" << endl << "The options are easy, medium, and hard." << endl;
 	string difficulty;
 	int diff;
 	getline(cin, difficulty);
 
 	while (difficulty != "easy" && difficulty != "medium" && difficulty != "hard") {
-		cout << "Invalid difficulty, please try again.\n";
+		cout << "Invalid difficulty, please try again." << endl;
 		getline(cin, difficulty);
 	}
 
@@ -362,7 +363,7 @@ int main() {
 		diff = HARD;
 	}
 
-	cout << "You have chosen " << difficulty << ".\nBuilding your puzzle...\n";
+	cout << "You have chosen " << difficulty << ".\nBuilding your puzzle..." << endl;
 	// Chose inital sudoku board from selected completed board
 	int board1[N*N] = {3,9,4,1,7,2,5,8,6,
 					   1,5,7,3,8,6,2,4,9,
@@ -396,12 +397,12 @@ int main() {
 					   };
 
 	int* possibleBoards[COMPLETED_BOARDS] = {board1, board2, board3};
-
+	srand(time(NULL));
 	int randomIndex = rand() % COMPLETED_BOARDS;
 	int* chosen;
 	chosen = possibleBoards[randomIndex];
 
-	cout << "Board chosen\n";
+	cout << "Board chosen" << endl;
 
 	Sudoku *mainBoard = new Sudoku(chosen);
 
@@ -409,6 +410,7 @@ int main() {
 
 	// randomly remove numbers to reach initial state
 	int row, d;
+	int empty = 0;
 	Row *current;
 	for (row = 0; row < N; row++) {
 		cout << "Random outer for loop" << '\n';
@@ -420,20 +422,20 @@ int main() {
 			col = rand() % N;
 			int * found;
 			found = find(removed, removed+diff, col);
-			while (found == removed+diff) {
-				cout << "Random while loop" << '\n';
+			while (found != removed+diff) {
 				col = rand() % N;
 				found = find(removed, removed+diff, col);
 			}
-			current->getUnits()[col]->setValue(0);
+			removed[d] = col;
+ 			current->getUnits()[col]->setValue(empty);
 		}
 	}
 	
-	cout << "Sudoku constructed\n";
+	cout << "Sudoku constructed" << endl;
 
-	cout << "Fill in the 0's with the correct number (1-9) by inputing:\n";
-	cout << "x-coordinate y-coordinate digit\n";
-	cout << "(0,0) is the top left location\n";
+	cout << "Fill in the 0's with the correct number (1-9) by inputing:" << endl;
+	cout << "x-coordinate y-coordinate digit" << endl;
+	cout << "(0,0) is the top left location" << endl;
 	// loop to get inputs and update map
 	while (!mainBoard->isComplete()) {
 		// print out board
@@ -449,14 +451,14 @@ int main() {
 		ss >> y;
 		ss >> digit;
 
-		cout << "Attempting to set (" << x << ", " << y << ") to " << digit << "\n";
+		cout << "Attempting to set (" << x << ", " << y << ") to " << digit << endl;
 
 		mainBoard->insert(x, y, digit);
 
 		// print out board with possible update
 		print_board(mainBoard);
 	}
-	cout << "Congratulations! You solved the puzzle!\n";
-	
+	cout << "Congratulations! You solved the puzzle!" << endl;
+	print_board(mainBoard);
 	return 0;
 }
