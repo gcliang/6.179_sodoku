@@ -230,6 +230,7 @@ class Sudoku {
 			int i;
 			for (i = 0; i < N; i++) {
 				Row *row = new Row();
+				rows[i] = row;
 				int j;
 				for (j = 0; j < N; j++) {
 					rows[i]->insert(j, &(*board)[i][j]);
@@ -238,7 +239,18 @@ class Sudoku {
 		}
 
 		void setColumns() {
-			
+			int k;
+			for (k = 0; k < N; k++) {
+				Column *column = new Column();
+				columns[k] = column;
+			}
+			int i;
+			for (i = 0; i < N; i++) {
+				int j;
+				for (j = 0; j < N; j++) {
+					columns[j]->insert(i, &(*board)[i][j]);
+				}
+			}
 		}
 
 		void setSections() {
