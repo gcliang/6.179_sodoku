@@ -1,12 +1,14 @@
 #include <iostream>
-#include <set>
 #include <cstdlib>
 #include <sstream>
 #include <algorithm>
+#include <math.h>
+#include <set>
 #include "sudoku.h"
 
 using namespace std;
 const int N = 9;
+const int SQRT_N = 3;
 const int EASY = 5;
 const int MEDIUM = 6;
 const int HARD = 7;
@@ -29,7 +31,7 @@ class Unit {
 		int value;
 		int row;
 		int column;
-		Section *section;
+		int section;
 	
 	public:
 		Unit() {
@@ -50,17 +52,21 @@ class Unit {
 			value = val;
 		}
 
-		// Row *getRow() {
-		// 	return row;
-		// }
+		int getRow() {
+			return row;
+		}
 
-		// Column *getColumn() {
-		// 	return column;
-		// }
+		int getColumn() {
+			return column;
+		}
 
-		// Section *getSection() {
-		// 	return section;
-		// }
+		int getSection() {
+			return section;
+		}
+
+		void setSection(int sec) {
+			section = sec;
+		}
 };
 
 class Row {
@@ -79,19 +85,6 @@ class Row {
 		Unit **getUnits() {
 			return units;
 		}
-
-		// Unit *getUnits() {
-		// 	return units;
-		// }
-
-		// void insert(int x, int value) {
-		// 	if (units[x] != NULL) {
-		// 		units[x]->setValue(value);
-		// 	} else {
-		// 		units[x] = new Unit(value);
-		// 	}
-		// 	values.insert(value);
-		// }
 
 		void insert(int x, Unit *unit) {
 			units[x] = unit;
@@ -131,19 +124,6 @@ class Column {
 			return units;
 		}
 
-		// Unit *getUnits() {
-		// 	return units;
-		// }
-
-		// void insert(int y, int value) {
-		// 	if (units[y] != NULL) {
-		// 		units[y]->setValue(value);
-		// 	} else {
-		// 		units[y] = new Unit(value);
-		// 	}
-		// 	values.insert(value);
-		// }
-
 		void insert(int y, Unit *unit) {
 			units[y] = unit;
 			values.insert((*unit).getValue());
@@ -167,7 +147,7 @@ class Column {
 
 class Section {
 	private:
-		Unit ***units;
+		Unit *units[SQRT_N * SQRT_N];
 		set<int> values;
 	
 	public:
@@ -176,30 +156,17 @@ class Section {
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
-					units[i][j] = NULL;
+					units[i * N + j] = NULL;
 				}
 			}
 		}
 		
-		Unit ***getUnits() {
+		Unit **getUnits() {
 			return units;
 		}
 
-		// Unit *getUnits() {
-		// 	return units;
-		// }
-
-		// void insert(int x, int y, int value) {
-		// 	if (units[y][x] != NULL) {
-		// 		units[y][x]->setValue(value);
-		// 	} else {
-		// 		units[y][x] = new Unit(value);
-		// 	}
-		// 	values.insert(value);
-		// }
-
 		void insert(int x, int y, Unit *unit) {
-			units[y][x] = unit;
+			units[y * N + x] = unit;
 			values.insert((*unit).getValue());
 		}
 
@@ -213,7 +180,7 @@ class Section {
   				}
   			}
 			if (hasValue) {
-				return units[y][x]->getValue() == value;
+				return units[y * N + x]->getValue() == value;
 			}
 			return true;
 		}
@@ -223,8 +190,8 @@ class Sudoku {
 	private:
 		Row *rows[N];
 		Column *columns[N];
-		Section ***sections;
-		Unit ***board;
+		Section *sections[SQRT_N * SQRT_N];
+		Unit *board[N * N];
 
 		void setRows() {
 			int i;
@@ -233,7 +200,7 @@ class Sudoku {
 				rows[i] = row;
 				int j;
 				for (j = 0; j < N; j++) {
-					rows[i]->insert(j, &(*board)[i][j]);
+					rows[i]->insert(j, board[i * N + j]);
 				}
 			}
 		}
@@ -248,24 +215,43 @@ class Sudoku {
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
-					columns[j]->insert(i, &(*board)[i][j]);
+					columns[j]->insert(i, board[i * N + j]);
 				}
 			}
 		}
 
-		void setSections() {
-			
+		int calculateSection(int i, int j) {
+			return (i / SQRT_N) * N + (j / SQRT_N);
 		}
-	
-	public:
-		Sudoku(int (*intBoard)[N][N]) {
+
+		void setSections() {
+			int k;
+			for (k = 0; k < N; k++) {
+				Section *section = new Section();
+				sections[k] = section;
+			}
 			int i;
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
-					board[i][j] = new Unit(i, j, (*intBoard)[i][j]);
+					sections[calculateSection(i, j)]->insert(j, i, board[i * N + j]);
 				}
 			}
+		}
+
+		void setBoard(int *intBoard) {
+			int i;
+			for (i = 0; i < N; i++) {
+				int j;
+				for (j = 0; j < N; j++) {
+					board[i * N + j] = new Unit(i, j, intBoard[i * N + j]);
+				}
+			}
+		}
+	
+	public:
+		Sudoku(int *intBoard) {
+			setBoard(intBoard);
 			setRows();
 			setColumns();
 			setSections();
@@ -279,11 +265,11 @@ class Sudoku {
 			return columns;
 		}
 
-		Section ***getSections() {
+		Section **getSections() {
 			return sections;
 		}
 
-		Unit ***getBoard() {
+		Unit **getBoard() {
 			return board;
 		}
 
@@ -309,10 +295,6 @@ class Sudoku {
 		bool isComplete() {
 			return true;
 		}
-
-		// void displayBoard() {
-
-		// }
 };
 
 void print_board(Sudoku *board) {
