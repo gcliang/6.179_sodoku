@@ -327,6 +327,7 @@ class Sudoku {
 void print_board(Sudoku *board) {
 	int row;
 	Row *cur;
+	cout << "-----------" << endl;
 	for (row = 0; row < N; row++) {
 		cur = board->getRows()[row];
 		Unit **vals;
@@ -462,8 +463,8 @@ int main() {
 			cout << s.what() << endl;
 		}
 
-		// print out board with possible update
-		print_board(mainBoard);
+//		// print out board with possible update
+//		print_board(mainBoard);
 	}
 	cout << "Congratulations! You solved the puzzle!" << endl;
 	print_board(mainBoard);
