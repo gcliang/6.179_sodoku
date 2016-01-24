@@ -392,9 +392,9 @@ int main() {
 		int removed[diff];
 		int col;
 		for (d = 0; d < diff; d++) {
+
 			col = rand() % 9;
 			int * found;
-
 			found = find(removed, removed+diff, col);
 			while (found == removed+diff) {
 				col = rand() % 9;
