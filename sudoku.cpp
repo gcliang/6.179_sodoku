@@ -392,11 +392,9 @@ int main() {
 	int* chosen;
 	chosen = possibleBoards[randomIndex];
 
-	cout << "Boaord chosen" << '\n';
+	cout << "Board chosen\n";
 
 	Sudoku *mainBoard = new Sudoku(chosen);
-
-	cout << "Sudoku constructed" << '\n';
 
 	// randomly remove numbers to reach initial state
 	int row, d;
@@ -413,14 +411,15 @@ int main() {
 				col = rand() % N;
 				found = find(removed, removed+diff, col);
 			}
-			current->insert(col, 0);
+			current->insert(0, current->getUnits()[col]);
 		}
 	}
 	
+	cout << "Sudoku constructed\n";
+
 	cout << "Fill in the 0's with the correct number (1-9) by inputing:\n";
 	cout << "x-coordinate y-coordinate digit\n";
 	cout << "(0,0) is the top left location\n";
-
 	// loop to get inputs and update map
 	while (!mainBoard->isComplete()) {
 		// print out board
