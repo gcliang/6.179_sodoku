@@ -301,12 +301,10 @@ class Sudoku {
 		}
 
 		bool isValid(int x, int y, int value) {
-			// TODO: check appropriate row
-			bool isValidRow;
-			// TODO: check appropriate column
-			bool isValidColumn;
+			bool isValidRow = getRows()[y]->isValid(x, value);
+			bool isValidColumn = getColumns()[x]->isValid(y, value);
 			// TODO: check appropriate section
-			bool isValidSection;
+			bool isValidSection = true;
 			return isValidRow && isValidColumn && isValidSection;
 		}
 
