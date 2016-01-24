@@ -149,7 +149,11 @@ class Section {
 	private:
 		Unit *units[SQRT_N * SQRT_N];
 		set<int> values;
-	
+
+		int calculateIdx(int i, int j) {
+			return (j % SQRT_N) * SQRT_N + (i % SQRT_N);
+		}
+
 	public:
 		Section() {
 			int i;
@@ -165,8 +169,8 @@ class Section {
 			return units;
 		}
 
-		void insert(int x, int y, Unit *unit) {
-			units[y * N + x] = unit;
+		void insert(int i, int j, Unit *unit) {
+			units[calculateIdx(i, j)] = unit;
 			values.insert((*unit).getValue());
 		}
 
@@ -221,7 +225,7 @@ class Sudoku {
 		}
 
 		int calculateSection(int i, int j) {
-			return (i / SQRT_N) * N + (j / SQRT_N);
+			return (i / SQRT_N) * SQRT_N + (j / SQRT_N);
 		}
 
 		void setSections() {
@@ -230,12 +234,19 @@ class Sudoku {
 				Section *section = new Section();
 				sections[k] = section;
 			}
+			cout << "Setup sections" << '\n';
 			int i;
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
-					sections[calculateSection(i, j)]->insert(j, i, board[i * N + j]);
+					cout << "About to calculate section" << '\n';
+					int currentSection = calculateSection(i, j);
+					cout << "Calculated section" << '\n';
+					sections[currentSection]->insert(i, j, board[i * N + j]);
+					cout << "Inserted into section" << '\n';
+					board[i * N + j]->setSection(currentSection);
 				}
+				cout << "Populated one section" << '\n';
 			}
 		}
 
@@ -252,9 +263,13 @@ class Sudoku {
 	public:
 		Sudoku(int *intBoard) {
 			setBoard(intBoard);
+			cout << "Board set" << '\n';
 			setRows();
+			cout << "Rows set" << '\n';
 			setColumns();
-			setSections();
+			cout << "Columns set" << '\n';
+			// setSections();
+			cout << "Sections set" << '\n';
 		}
 
 		Row **getRows() {
@@ -377,7 +392,11 @@ int main() {
 	int* chosen;
 	chosen = possibleBoards[randomIndex];
 
+	cout << "Boaord chosen" << '\n';
+
 	Sudoku *mainBoard = new Sudoku(chosen);
+
+	cout << "Sudoku constructed" << '\n';
 
 	// randomly remove numbers to reach initial state
 	int row, d;
@@ -397,7 +416,7 @@ int main() {
 			current->insert(col, 0);
 		}
 	}
-	/*
+	
 	cout << "Fill in the 0's with the correct number (1-9) by inputing:\n";
 	cout << "x-coordinate y-coordinate digit\n";
 	cout << "(0,0) is the top left location\n";
@@ -425,6 +444,6 @@ int main() {
 		print_board(mainBoard);
 	}
 	cout << "Congratulations! You solved the puzzle!\n";
-	*/
+	
 	return 0;
 }
