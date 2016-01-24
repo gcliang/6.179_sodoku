@@ -16,12 +16,14 @@ const int HARD = 7;
 const int COMPLETED_BOARDS = 3;
 
 class OutOfBoundsException : public exception {
+public:
 	virtual const char* what() const throw() {
 		return "That position is out of bounds! Please try again.";
 	}
 } outOfBoundsException;
 
 class SudokuInvariantException : public exception {
+public:
 	virtual const char* what() const throw() {
 		return "That move violates the Sudoku invariant! Please try again.";
 	}
@@ -450,8 +452,13 @@ int main() {
 		ss >> digit;
 
 		cout << "Attempting to set (" << x << ", " << y << ") to " << digit << endl;
-
-		mainBoard->insert(x, y, digit);
+		try {
+			mainBoard->insert(x, y, digit);
+		} catch (const OutOfBoundsException &o) {
+			cout << o.what() << endl;
+		} catch (const SudokuInvariantException &s) {
+			cout << s.what() << endl;
+		}
 
 		// print out board with possible update
 		print_board(mainBoard);
