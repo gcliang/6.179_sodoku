@@ -66,10 +66,6 @@ class Unit {
 		bool isMutable;
 	
 	public:
-		Unit() {
-			value = 0;
-		}
-
 		Unit(int r, int c, int s, int val, bool isMut) {
 			row = r;
 			column = c;
@@ -122,22 +118,13 @@ class Row {
 
 		void insert(int x, Unit *unit) {
 			units[x] = unit;
-			values.insert(unit->getValue());
+			if (unit->getValue() != 0) {
+				values.insert(unit->getValue());
+			}
 		}
 
 		bool isValid(int x, int value) {
   			set<int>::iterator it;
-  			// bool hasValue = false;
-  			// for (it=values.begin(); it!=values.end(); ++it) {
-  			// 	if (*it == value) {
-  			// 		cout << "*it: " << *it << '\n';
-  			// 		hasValue = true;
-  			// 		break;
-  			// 	}
-  			// }
-			// if (hasValue) {
-			// 	return units[x]->getValue() == value;
-			// }
 			it = values.find(value);
 			if (it != values.end()) {
 				return units[x]->getValue() == value;
@@ -165,21 +152,13 @@ class Column {
 
 		void insert(int y, Unit *unit) {
 			units[y] = unit;
-			values.insert(unit->getValue());
+			if (unit->getValue() != 0) {
+				values.insert(unit->getValue());
+			}
 		}
 
 		bool isValid(int y, int value) {
   			set<int>::iterator it;
-  	// 		bool hasValue = false;
-  	// 		for (it=values.begin(); it!=values.end(); ++it) {
-  	// 			if (*it == value) {
-  	// 				hasValue = true;
-  	// 				break;
-  	// 			}
-  	// 		}
-			// if (hasValue) {
-			// 	return units[y]->getValue() == value;
-			// }
 			it = values.find(value);
 			if (it != values.end()) {
 				return units[y]->getValue() == value;
@@ -213,22 +192,17 @@ class Section {
 		}
 
 		void insert(int x, int y, Unit *unit) {
+			cout << "Before calculating index" << endl;
 			units[calculateIdx(x, y)] = unit;
-			values.insert(unit->getValue());
+			cout << "After inserting unit" << endl;
+			if (unit->getValue() != 0) {
+				values.insert(unit->getValue());
+			}
+			cout << "After inserting into values set" << endl;
 		}
 
 		bool isValid(int x, int y, int value) {
   			set<int>::iterator it;
-  	// 		bool hasValue = false;
-  	// 		for (it=values.begin(); it!=values.end(); ++it) {
-  	// 			if (*it == value) {
-  	// 				hasValue = true;
-  	// 				break;
-  	// 			}
-  	// 		}
-			// if (hasValue) {
-			// 	return units[y * N + x]->getValue() == value;
-			// }
 			it = values.find(value);
 			if (it != values.end()) {
 				return units[y * N + x]->getValue() == value;
@@ -317,9 +291,15 @@ class Sudoku {
 			setRows();
 			cout << "Rows set" << endl;
 			setColumns();
+<<<<<<< HEAD
 			cout << "Columns set" << endl;
 			// setSections();
 			cout << "Sections set" << endl;
+=======
+			cout << "Columns set" << '\n';
+			setSections();
+			cout << "Sections set" << '\n';
+>>>>>>> c3dd4b9b6bd7bd2354eff948d1b6022fcc693164
 		}
 
 		Row **getRows() {
@@ -356,10 +336,15 @@ class Sudoku {
 					throw sectionInvariantException;
 				}
 			}
+			cout << "Before Insert" << endl;
 			board[y * N + x]->setValue(value);
+			cout << "After Setting Value" << endl;
 			getRows()[y]->insert(x, board[y * N + x]);
+			cout << "After Row Insert" << endl;
 			getColumns()[x]->insert(y, board[y * N + x]);
+			cout << "After Column Insert" << endl;
 			getSections()[calculateSection(y, x)]->insert(x, y, board[y * N + x]);
+			cout << "After Section Insert" << endl;
 		}
 
 		bool isValid(int x, int y, int value) {
