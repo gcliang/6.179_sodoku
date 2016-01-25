@@ -179,10 +179,10 @@ class Section {
 	public:
 		Section() {
 			int i;
-			for (i = 0; i < N; i++) {
+			for (i = 0; i < SQRT_N; i++) {
 				int j;
-				for (j = 0; j < N; j++) {
-					units[i * N + j] = NULL;
+				for (j = 0; j < SQRT_N; j++) {
+					units[i * SQRT_N + j] = NULL;
 				}
 			}
 		}
@@ -260,11 +260,11 @@ class Sudoku {
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
-					cout << "About to calculate section" << '\n';
+					cout << "About to calculate section" << endl;
 					int currentSection = calculateSection(i, j);
-					cout << "Calculated section" << '\n';
+					cout << "Calculated section" << endl;
 					sections[currentSection]->insert(j, i, board[i * N + j]);
-					cout << "Inserted into section" << '\n';
+					cout << "Inserted into section" << endl;
 				}
 				cout << "Populated one section" << '\n';
 			}
@@ -291,15 +291,9 @@ class Sudoku {
 			setRows();
 			cout << "Rows set" << endl;
 			setColumns();
-<<<<<<< HEAD
 			cout << "Columns set" << endl;
 			// setSections();
 			cout << "Sections set" << endl;
-=======
-			cout << "Columns set" << '\n';
-			setSections();
-			cout << "Sections set" << '\n';
->>>>>>> c3dd4b9b6bd7bd2354eff948d1b6022fcc693164
 		}
 
 		Row **getRows() {
@@ -448,6 +442,7 @@ int main() {
 					   };
 
 	int* possibleBoards[COMPLETED_BOARDS] = {board1, board2, board3};
+
 	srand(time(NULL));
 	int randomIndex = rand() % COMPLETED_BOARDS;
 	int* chosen;
