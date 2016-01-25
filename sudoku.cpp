@@ -380,13 +380,13 @@ void print_board(Sudoku *board) {
 		int col;
 		for (col = 0; col < N; col++) {
 			cout << vals[col]->getValue();
-			if ((col+1) % 3 == 0) {
+			if ((col+1) % SQRT_N == 0) {
 				cout << " "; // Add horizontal space between sections
 			}
 		}
 		cout << "\n";
-		if ((row+1) % 3 == 0) {
-			cout << "\n"; // Add vertical space between sections
+		if ((row+1) % SQRT_N ==0) {
+			cout << endl; // Add vertical space between sections
 		}
 	}
 }
@@ -411,7 +411,7 @@ int main() {
 		diff = HARD;
 	}
 
-	cout << "You have chosen " << difficulty << ".\nBuilding your puzzle..." << endl;
+	cout << "You have chosen " << difficulty << endl << "Building your puzzle..." << endl;
 	// Chose inital sudoku board from selected completed board
 	int board1[N*N] = {3,9,4,1,7,2,5,8,6,
 					   1,5,7,3,8,6,2,4,9,
@@ -452,21 +452,17 @@ int main() {
 
 	cout << "Board chosen" << endl;
 
-	Sudoku *mainBoard = new Sudoku(chosen);
-
-	cout << "Sudoku constructed\n";
+//	Sudoku *mainBoard = new Sudoku(chosen);
 
 	// randomly remove numbers to reach initial state
 	int row, d;
 	int empty = 0;
-	Row *current;
+//	Row *current;
 	for (row = 0; row < N; row++) {
-		cout << "Random outer for loop" << '\n';
-		current = mainBoard->getRows()[row];
+//		current = mainBoard->getRows()[row];
 		int removed[diff];
 		int col;
 		for (d = 0; d < diff; d++) {
-			cout << "Random inner for loop" << '\n';
 			col = rand() % N;
 			int * found;
 			found = find(removed, removed+diff, col);
@@ -475,10 +471,13 @@ int main() {
 				found = find(removed, removed+diff, col);
 			}
 			removed[d] = col;
- 			current->getUnits()[col]->setValue(empty);
+			chosen[row*N + col] = 0;
+// 			current->getUnits()[col]->setValue(empty);
 		}
 	}
 	
+	Sudoku *mainBoard = new Sudoku(chosen);
+
 	cout << "Sudoku constructed" << endl;
 
 	cout << "Fill in the 0's with the correct number (1-9) by inputing:" << endl;
