@@ -179,10 +179,10 @@ class Section {
 	public:
 		Section() {
 			int i;
-			for (i = 0; i < N; i++) {
+			for (i = 0; i < SQRT_N; i++) {
 				int j;
-				for (j = 0; j < N; j++) {
-					units[i * N + j] = NULL;
+				for (j = 0; j < SQRT_N; j++) {
+					units[i * SQRT_N + j] = NULL;
 				}
 			}
 		}
@@ -320,8 +320,7 @@ class Sudoku {
 			} else if (!isValid(x, y, value)) {
 				bool isValidRow = getRows()[y]->isValid(x, value);
 				bool isValidColumn = getColumns()[x]->isValid(y, value);
-				// TODO: check appropriate section
-				bool isValidSection = true;
+				bool isValidSection = sections[calculateSection(y, x)]->isValid(x, y, value);
 				if (!isValidRow) {
 					throw rowInvariantException;
 				} else if (!isValidColumn) {
@@ -344,8 +343,7 @@ class Sudoku {
 		bool isValid(int x, int y, int value) {
 			bool isValidRow = getRows()[y]->isValid(x, value);
 			bool isValidColumn = getColumns()[x]->isValid(y, value);
-			// TODO: check appropriate section
-			bool isValidSection = true;
+			bool isValidSection = sections[calculateSection(y, x)]->isValid(x, y, value);
 			cout << "isValidRow: " << isValidRow << '\n';
 			cout << "isValidColumn: " << isValidColumn << '\n';
 			cout << "isValidSection: " << isValidSection << '\n';
