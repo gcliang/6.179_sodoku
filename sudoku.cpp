@@ -320,8 +320,7 @@ class Sudoku {
 			} else if (!isValid(x, y, value)) {
 				bool isValidRow = getRows()[y]->isValid(x, value);
 				bool isValidColumn = getColumns()[x]->isValid(y, value);
-				// TODO: check appropriate section
-				bool isValidSection = true;
+				bool isValidSection = sections[calculateSection(y, x)]->isValid(x, y, value);
 				if (!isValidRow) {
 					throw rowInvariantException;
 				} else if (!isValidColumn) {
@@ -344,8 +343,7 @@ class Sudoku {
 		bool isValid(int x, int y, int value) {
 			bool isValidRow = getRows()[y]->isValid(x, value);
 			bool isValidColumn = getColumns()[x]->isValid(y, value);
-			// TODO: check appropriate section
-			bool isValidSection = true;
+			bool isValidSection = sections[calculateSection(y, x)]->isValid(x, y, value);
 			cout << "isValidRow: " << isValidRow << '\n';
 			cout << "isValidColumn: " << isValidColumn << '\n';
 			cout << "isValidSection: " << isValidSection << '\n';
