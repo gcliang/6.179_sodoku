@@ -192,13 +192,10 @@ class Section {
 		}
 
 		void insert(int x, int y, Unit *unit) {
-			cout << "Before calculating index" << endl;
 			units[calculateIdx(x, y)] = unit;
-			cout << "After inserting unit" << endl;
 			if (unit->getValue() != 0) {
 				values.insert(unit->getValue());
 			}
-			cout << "After inserting into values set" << endl;
 		}
 
 		bool isValid(int x, int y, int value) {
@@ -260,11 +257,8 @@ class Sudoku {
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
-					cout << "About to calculate section" << endl;
 					int currentSection = calculateSection(i, j);
-					cout << "Calculated section" << endl;
 					sections[currentSection]->insert(j, i, board[i * N + j]);
-					cout << "Inserted into section" << endl;
 				}
 				cout << "Populated one section" << '\n';
 			}
@@ -292,7 +286,7 @@ class Sudoku {
 			cout << "Rows set" << endl;
 			setColumns();
 			cout << "Columns set" << endl;
-			// setSections();
+			setSections();
 			cout << "Sections set" << endl;
 		}
 
@@ -448,14 +442,10 @@ int main() {
 
 	cout << "Board chosen" << endl;
 
-//	Sudoku *mainBoard = new Sudoku(chosen);
-
 	// randomly remove numbers to reach initial state
 	int row, d;
 	int empty = 0;
-//	Row *current;
 	for (row = 0; row < N; row++) {
-//		current = mainBoard->getRows()[row];
 		int removed[diff];
 		int col;
 		for (d = 0; d < diff; d++) {
@@ -468,7 +458,6 @@ int main() {
 			}
 			removed[d] = col;
 			chosen[row*N + col] = 0;
-// 			current->getUnits()[col]->setValue(empty);
 		}
 	}
 	
@@ -501,10 +490,9 @@ int main() {
 			cout << o.what() << endl;
 		} catch (const SudokuInvariantException& s) {
 			cout << s.what() << endl;
+		} catch (const ImmutableUnitException& i) {
+			cout << i.what() << endl;
 		}
-
-//		// print out board with possible update
-//		print_board(mainBoard);
 	}
 	cout << "Congratulations! You solved the puzzle!" << endl;
 	print_board(mainBoard);
