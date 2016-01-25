@@ -25,9 +25,30 @@ public:
 class SudokuInvariantException : public exception {
 public:
 	virtual const char* what() const throw() {
-		return "That move violates the Sudoku invariant! Please try again.";
+		return "That move violates the Sudoku invariant:\n";
 	}
 } sudokuInvariantException;
+
+class RowInvariantException : SudokuInvariantException {
+	public:
+		virtual const char* what() const throw() {
+			return "That value already exists in that row! Please try again.";
+	}
+} rowInvariantException;
+
+class ColumnInvariantException : SudokuInvariantException {
+	public:
+		virtual const char* what() const throw() {
+			return "That value already exists in that column! Please try again.";
+	}
+} columnInvariantException;
+
+class SectionInvariantException : SudokuInvariantException {
+	public:
+		virtual const char* what() const throw() {
+			return "That value already exists in that section! Please try again.";
+	}
+} sectionInvariantException;
 
 class Unit {
 	private:
@@ -91,19 +112,24 @@ class Row {
 
 		void insert(int x, Unit *unit) {
 			units[x] = unit;
-			values.insert((*unit).getValue());
+			values.insert(unit->getValue());
 		}
 
 		bool isValid(int x, int value) {
   			set<int>::iterator it;
-  			bool hasValue = false;
-  			for (it=values.begin(); it!=values.end(); ++it) {
-  				if (*it == value) {
-  					hasValue = true;
-  					break;
-  				}
-  			}
-			if (hasValue) {
+  			// bool hasValue = false;
+  			// for (it=values.begin(); it!=values.end(); ++it) {
+  			// 	if (*it == value) {
+  			// 		cout << "*it: " << *it << '\n';
+  			// 		hasValue = true;
+  			// 		break;
+  			// 	}
+  			// }
+			// if (hasValue) {
+			// 	return units[x]->getValue() == value;
+			// }
+			it = values.find(value);
+			if (it != values.end()) {
 				return units[x]->getValue() == value;
 			}
 			return true;
@@ -129,19 +155,23 @@ class Column {
 
 		void insert(int y, Unit *unit) {
 			units[y] = unit;
-			values.insert((*unit).getValue());
+			values.insert(unit->getValue());
 		}
 
 		bool isValid(int y, int value) {
   			set<int>::iterator it;
-  			bool hasValue = false;
-  			for (it=values.begin(); it!=values.end(); ++it) {
-  				if (*it == value) {
-  					hasValue = true;
-  					break;
-  				}
-  			}
-			if (hasValue) {
+  	// 		bool hasValue = false;
+  	// 		for (it=values.begin(); it!=values.end(); ++it) {
+  	// 			if (*it == value) {
+  	// 				hasValue = true;
+  	// 				break;
+  	// 			}
+  	// 		}
+			// if (hasValue) {
+			// 	return units[y]->getValue() == value;
+			// }
+			it = values.find(value);
+			if (it != values.end()) {
 				return units[y]->getValue() == value;
 			}
 			return true;
@@ -174,19 +204,23 @@ class Section {
 
 		void insert(int i, int j, Unit *unit) {
 			units[calculateIdx(i, j)] = unit;
-			values.insert((*unit).getValue());
+			values.insert(unit->getValue());
 		}
 
 		bool isValid(int x, int y, int value) {
   			set<int>::iterator it;
-  			bool hasValue = false;
-  			for (it=values.begin(); it!=values.end(); ++it) {
-  				if (*it == value) {
-  					hasValue = true;
-  					break;
-  				}
-  			}
-			if (hasValue) {
+  	// 		bool hasValue = false;
+  	// 		for (it=values.begin(); it!=values.end(); ++it) {
+  	// 			if (*it == value) {
+  	// 				hasValue = true;
+  	// 				break;
+  	// 			}
+  	// 		}
+			// if (hasValue) {
+			// 	return units[y * N + x]->getValue() == value;
+			// }
+			it = values.find(value);
+			if (it != values.end()) {
 				return units[y * N + x]->getValue() == value;
 			}
 			return true;
@@ -295,7 +329,17 @@ class Sudoku {
 			if (x >= N || y >= N || x < 0 || y < 0) {
 				throw outOfBoundsException;
 			} else if (!isValid(x, y, value)) {
-				throw sudokuInvariantException;
+				bool isValidRow = getRows()[y]->isValid(x, value);
+				bool isValidColumn = getColumns()[x]->isValid(y, value);
+				// TODO: check appropriate section
+				bool isValidSection = true;
+				if (!isValidRow) {
+					throw rowInvariantException;
+				} else if (!isValidColumn) {
+					throw columnInvariantException;
+				} else if (!isValidSection) {
+					throw sectionInvariantException;
+				}
 			}
 			board[y * N + x]->setValue(value);
 		}
@@ -305,6 +349,9 @@ class Sudoku {
 			bool isValidColumn = getColumns()[x]->isValid(y, value);
 			// TODO: check appropriate section
 			bool isValidSection = true;
+			cout << "isValidRow: " << isValidRow << '\n';
+			cout << "isValidColumn: " << isValidColumn << '\n';
+			cout << "isValidSection: " << isValidSection << '\n';
 			return isValidRow && isValidColumn && isValidSection;
 		}
 
@@ -338,7 +385,7 @@ void print_board(Sudoku *board) {
 			}
 		}
 		cout << "\n";
-		if ((row+1) % 3 ==0) {
+		if ((row+1) % 3 == 0) {
 			cout << "\n"; // Add vertical space between sections
 		}
 	}
