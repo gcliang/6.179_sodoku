@@ -22,6 +22,13 @@ public:
 	}
 } outOfBoundsException;
 
+class ImmutableUnitException : public exception {
+	public:
+		virtual const char* what() const throw() {
+			return "That position is immutable! Please insert into another position.";
+	}
+} immutableUnitException;
+
 class SudokuInvariantException : public exception {
 public:
 	virtual const char* what() const throw() {
@@ -56,16 +63,19 @@ class Unit {
 		int row;
 		int column;
 		int section;
+		bool isMutable;
 	
 	public:
 		Unit() {
 			value = 0;
 		}
 
-		Unit(int r, int c, int val) {
+		Unit(int r, int c, int s, int val, bool isMut) {
 			row = r;
 			column = c;
+			section = s;
 			value = val;
+			isMutable = isMut;
 		}
 
 		int getValue() {
@@ -88,8 +98,8 @@ class Unit {
 			return section;
 		}
 
-		void setSection(int sec) {
-			section = sec;
+		bool getMutability() {
+			return isMutable;
 		}
 };
 
@@ -183,8 +193,8 @@ class Section {
 		Unit *units[SQRT_N * SQRT_N];
 		set<int> values;
 
-		int calculateIdx(int i, int j) {
-			return (j % SQRT_N) * SQRT_N + (i % SQRT_N);
+		int calculateIdx(int x, int y) {
+			return (y % SQRT_N) * SQRT_N + (x % SQRT_N);
 		}
 
 	public:
@@ -202,8 +212,8 @@ class Section {
 			return units;
 		}
 
-		void insert(int i, int j, Unit *unit) {
-			units[calculateIdx(i, j)] = unit;
+		void insert(int x, int y, Unit *unit) {
+			units[calculateIdx(x, y)] = unit;
 			values.insert(unit->getValue());
 		}
 
@@ -279,9 +289,8 @@ class Sudoku {
 					cout << "About to calculate section" << '\n';
 					int currentSection = calculateSection(i, j);
 					cout << "Calculated section" << '\n';
-					sections[currentSection]->insert(i, j, board[i * N + j]);
+					sections[currentSection]->insert(j, i, board[i * N + j]);
 					cout << "Inserted into section" << '\n';
-					board[i * N + j]->setSection(currentSection);
 				}
 				cout << "Populated one section" << '\n';
 			}
@@ -292,7 +301,11 @@ class Sudoku {
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
-					board[i * N + j] = new Unit(i, j, intBoard[i * N + j]);
+					if (intBoard[i * N + j] == 0) {
+						board[i * N + j] = new Unit(i, j, calculateSection(i, j), intBoard[i * N + j], true);
+					} else {
+						board[i * N + j] = new Unit(i, j, calculateSection(i, j), intBoard[i * N + j], false);
+					}
 				}
 			}
 		}
@@ -328,6 +341,8 @@ class Sudoku {
 		void insert(int x, int y, int value) {
 			if (x >= N || y >= N || x < 0 || y < 0) {
 				throw outOfBoundsException;
+			} else if (!board[y * N + x]->getMutability()) {
+				throw immutableUnitException;
 			} else if (!isValid(x, y, value)) {
 				bool isValidRow = getRows()[y]->isValid(x, value);
 				bool isValidColumn = getColumns()[x]->isValid(y, value);
@@ -342,6 +357,9 @@ class Sudoku {
 				}
 			}
 			board[y * N + x]->setValue(value);
+			getRows()[y]->insert(x, board[y * N + x]);
+			getColumns()[x]->insert(y, board[y * N + x]);
+			getSections()[calculateSection(y, x)]->insert(x, y, board[y * N + x]);
 		}
 
 		bool isValid(int x, int y, int value) {
