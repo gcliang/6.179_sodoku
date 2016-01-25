@@ -29,21 +29,21 @@ public:
 	}
 } sudokuInvariantException;
 
-class RowInvariantException : SudokuInvariantException {
+class RowInvariantException : public SudokuInvariantException {
 	public:
 		virtual const char* what() const throw() {
 			return "That value already exists in that row! Please try again.";
 	}
 } rowInvariantException;
 
-class ColumnInvariantException : SudokuInvariantException {
+class ColumnInvariantException : public SudokuInvariantException {
 	public:
 		virtual const char* what() const throw() {
 			return "That value already exists in that column! Please try again.";
 	}
 } columnInvariantException;
 
-class SectionInvariantException : SudokuInvariantException {
+class SectionInvariantException : public SudokuInvariantException {
 	public:
 		virtual const char* what() const throw() {
 			return "That value already exists in that section! Please try again.";
@@ -501,9 +501,9 @@ int main() {
 		cout << "Attempting to set (" << x << ", " << y << ") to " << digit << endl;
 		try {
 			mainBoard->insert(x, y, digit);
-		} catch (const OutOfBoundsException &o) {
+		} catch (const OutOfBoundsException& o) {
 			cout << o.what() << endl;
-		} catch (const SudokuInvariantException &s) {
+		} catch (const SudokuInvariantException& s) {
 			cout << s.what() << endl;
 		}
 
