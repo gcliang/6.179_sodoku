@@ -6,9 +6,9 @@
 #include <set>
 #include <ctime>
 #include "sudoku.h"
-// #include <SDL2/SDL.h>
 
 using namespace std;
+
 const int N = 9;
 const int SQRT_N = 3;
 const int EASY = 5;
