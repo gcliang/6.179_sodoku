@@ -313,13 +313,13 @@ class Sudoku {
 	public:
 		Sudoku(int *intBoard) {
 			setBoard(intBoard);
-			cout << "Board set" << '\n';
+			cout << "Board set" << endl;
 			setRows();
-			cout << "Rows set" << '\n';
+			cout << "Rows set" << endl;
 			setColumns();
-			cout << "Columns set" << '\n';
+			cout << "Columns set" << endl;
 			// setSections();
-			cout << "Sections set" << '\n';
+			cout << "Sections set" << endl;
 		}
 
 		Row **getRows() {
