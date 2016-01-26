@@ -10,7 +10,9 @@
 // #include "SDL2/SDL_image.h"
 // #include "SDL2/SDL_mixer.h"
 
+
 using namespace std;
+
 const int N = 9;
 const int SQRT_N = 3;
 const int EASY = 5;
@@ -21,9 +23,23 @@ const int COMPLETED_BOARDS = 3;
 class OutOfBoundsException : public exception {
 public:
 	virtual const char* what() const throw() {
-		return "That position is out of bounds! Please try again.";
+		return "";
 	}
 } outOfBoundsException;
+
+class PositionOutOfBoundsException : public OutOfBoundsException {
+public:
+	virtual const char* what() const throw() {
+		return "That position is out of bounds! Please try again.";
+	}
+} positionOutOfBoundsException;
+
+class ValueOutOfBoundsException : public OutOfBoundsException {
+public:
+	virtual const char* what() const throw() {
+		return "That value is out of bounds! Please try again.";
+	}
+} valueOutOfBoundsException;
 
 class ImmutableUnitException : public exception {
 	public:
@@ -35,7 +51,7 @@ class ImmutableUnitException : public exception {
 class SudokuInvariantException : public exception {
 public:
 	virtual const char* what() const throw() {
-		return "That move violates the Sudoku invariant:\n";
+		return "";
 	}
 } sudokuInvariantException;
 
@@ -311,7 +327,9 @@ class Sudoku {
 
 		void insert(int x, int y, int value) {
 			if (x >= N || y >= N || x < 0 || y < 0) {
-				throw outOfBoundsException;
+				throw positionOutOfBoundsException;
+			} else if (value < 0 || value > N) {
+				throw valueOutOfBoundsException;
 			} else if (!board[y * N + x]->getMutability()) {
 				throw immutableUnitException;
 			} else if (!isValid(x, y, value)) {
