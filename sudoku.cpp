@@ -126,109 +126,203 @@ class Row {
 				units[i] = NULL;
 			}
 		}
-		
+
 		Unit **getUnits() {
 			return units;
 		}
 
 		void insert(int x, Unit *unit) {
-			units[x] = unit;
-			if (unit->getValue() != 0) {
-				values.insert(unit->getValue());
+			if (units[x] == NULL) {
+				units[x] = unit;
 			}
+			values.insert(unit->getValue());
 		}
 
-		bool isValid(int x, int value) {
-  			set<int>::iterator it;
-			it = values.find(value);
-			if (it != values.end()) {
-				return units[x]->getValue() == value;
-			}
-			return true;
+		void insert(int value) {
+			values.insert(value);
 		}
+
+		void remove(int value) {
+			values.erase(values.find(value));
+		}
+
+		bool isValid(int value) {
+			if (value == 0) {
+				return true;
+			}
+			set<int>::iterator it;
+			it = values.find(value);
+			return it == values.end();
+		}
+
+		// void insert(int x, Unit *unit) {
+		// 	if (units[x] != NULL) {
+		// 		// cout << "This value: " << getUnits()[x]->getValue() << endl;
+		// 		// cout << "Value in values: " << std::to_string(values.find(units[x]->getValue()) != values.end()) << endl;
+		// 		if (values.find(units[x]->getValue()) != values.end()){
+		// 			values.erase(values.find(units[x]->getValue()));
+		// 			// cout << "Deleting val=" << *values.find(units[x]->getValue()) << endl;
+		// 		}
+		// 	} else {
+		// 		units[x] = unit;
+		// 	}
+		// 	if (unit->getValue() != 0) {
+		// 		// cout << "Inserting value" << endl;
+		// 		values.insert(unit->getValue());
+		// 	}
+		// }
+
+		// bool isValid(int x, int value) {
+  // 			set<int>::iterator it;
+		// 	it = values.find(value);
+		// 	std::cout << "Row isValid... val=" << *it << " stored_val=" << getUnits()[x]->getValue() << endl;
+		// 	if (it != values.end() && value != 0) {
+		// 		return getUnits()[x]->getValue() == value;
+		// 	}
+		// 	return true;
+		// 	// return it == values.end();
+		// }
 };
 
 class Column {
 	private:
-		Unit *units[N];
+		// Unit *units[N];
 		set<int> values;
 	
 	public:
-		Column() {
-			int i;
-			for (i = 0; i < N; i++) {
-				units[i] = NULL;
+		// Column() {
+		// 	int i;
+		// 	for (i = 0; i < N; i++) {
+		// 		units[i] = NULL;
+		// 	}
+		// }
+
+		void insert(int value) {
+			values.insert(value);
+		}
+
+		void remove(int value) {
+			values.erase(values.find(value));
+		}
+
+		bool isValid(int value) {
+			if (value == 0) {
+				return true;
 			}
-		}
-
-		Unit **getUnits() {
-			return units;
-		}
-
-		void insert(int y, Unit *unit) {
-			units[y] = unit;
-			if (unit->getValue() != 0) {
-				values.insert(unit->getValue());
-			}
-		}
-
-		bool isValid(int y, int value) {
-  			set<int>::iterator it;
+			set<int>::iterator it;
 			it = values.find(value);
-			if (it != values.end()) {
-				return units[y]->getValue() == value;
-			}
-			return true;
+			return it == values.end();
 		}
+
+		// Unit **getUnits() {
+		// 	return units;
+		// }
+
+		// void insert(int y, Unit *unit) {
+		// 	if (units[y] != NULL) {
+		// 		values.erase(units[y]->getValue());
+		// 	} else {
+		// 		units[y] = unit;
+		// 	}
+		// 	if (unit->getValue() != 0) {
+		// 		values.insert(unit->getValue());
+		// 	}
+		// }
+
+		// bool isValid(int y, int value) {
+  // 			set<int>::iterator it;
+		// 	it = values.find(value);
+		// 	if (it != values.end() && value != 0) {
+		// 		return getUnits()[y]->getValue() == value;
+		// 	}
+		// 	return true;
+		// 	// return it == values.end();
+		// }
 };
 
 class Section {
 	private:
-		Unit *units[SQRT_N * SQRT_N];
+		// Unit *units[SQRT_N * SQRT_N];
 		set<int> values;
 
-		int calculateIdx(int x, int y) {
-			return (y % SQRT_N) * SQRT_N + (x % SQRT_N);
-		}
+		// int calculateIdx(int x, int y) {
+		// 	return (y % SQRT_N) * SQRT_N + (x % SQRT_N);
+		// }
 
 	public:
-		Section() {
-			int i;
-			for (i = 0; i < SQRT_N; i++) {
-				int j;
-				for (j = 0; j < SQRT_N; j++) {
-					units[i * SQRT_N + j] = NULL;
-				}
+		// Section() {
+		// 	int i;
+		// 	for (i = 0; i < SQRT_N; i++) {
+		// 		int j;
+		// 		for (j = 0; j < SQRT_N; j++) {
+		// 			units[i * SQRT_N + j] = NULL;
+		// 		}
+		// 	}
+		// }
+
+		void insert(int value) {
+			values.insert(value);
+		}
+
+		void remove(int value) {
+			values.erase(values.find(value));
+		}
+
+		bool isValid(int value) {
+			if (value == 0) {
+				return true;
 			}
+			set<int>::iterator it;
+			it = values.find(value);
+			return it == values.end();
 		}
 		
-		Unit **getUnits() {
-			return units;
-		}
+		// Unit **getUnits() {
+		// 	return units;
+		// }
 
-		void insert(int x, int y, Unit *unit) {
-			units[calculateIdx(x, y)] = unit;
-			if (unit->getValue() != 0) {
-				values.insert(unit->getValue());
-			}
-		}
+		// void insert(int x, int y, Unit *unit) {
+		// 	if (units[calculateIdx(x, y)] != NULL) {
+		// 		values.erase(units[calculateIdx(x, y)]->getValue());
+		// 	} else {
+		// 		units[calculateIdx(x, y)] = unit;
+		// 	}
+		// 	if (unit->getValue() != 0) {
+		// 		values.insert(unit->getValue());
+		// 	}
+		// }
 
-		bool isValid(int x, int y, int value) {
-  			set<int>::iterator it;
-			it = values.find(value);
-			if (it != values.end()) {
-				return units[y * N + x]->getValue() == value;
-			}
-			return true;
-		}
+		// bool isValid(int x, int y, int value) {
+  // 			set<int>::iterator it;
+		// 	it = values.find(value);
+		// 	if (it != values.end() && value != 0) {
+		// 		return getUnits()[y * N + x]->getValue() == value;
+		// 	}
+		// 	return true;
+		// 	// return it == values.end();
+		// }
 };
 
 class Sudoku {
 	private:
+		Unit *board[N * N];
 		Row *rows[N];
 		Column *columns[N];
 		Section *sections[SQRT_N * SQRT_N];
-		Unit *board[N * N];
+		
+		void setBoard(int *intBoard) {
+			int i;
+			for (i = 0; i < N; i++) {
+				int j;
+				for (j = 0; j < N; j++) {
+					if (intBoard[i * N + j] == 0) {
+						board[i * N + j] = new Unit(i, j, calculateSection(i, j), intBoard[i * N + j], true);
+					} else {
+						board[i * N + j] = new Unit(i, j, calculateSection(i, j), intBoard[i * N + j], false);
+					}
+				}
+			}
+		}
 
 		void setRows() {
 			int i;
@@ -252,7 +346,7 @@ class Sudoku {
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
-					columns[j]->insert(i, board[i * N + j]);
+					columns[j]->insert(board[i * N + j]->getValue());
 				}
 			}
 		}
@@ -267,32 +361,81 @@ class Sudoku {
 				Section *section = new Section();
 				sections[k] = section;
 			}
-			cout << "Setup sections" << '\n';
+			cout << "Setup sections" << endl;
 			int i;
 			for (i = 0; i < N; i++) {
 				int j;
 				for (j = 0; j < N; j++) {
 					int currentSection = calculateSection(i, j);
-					sections[currentSection]->insert(j, i, board[i * N + j]);
+					sections[currentSection]->insert(board[i * N + j]->getValue());
 				}
-				cout << "Populated one section" << '\n';
+				cout << "Populated one section" << endl;
 			}
 		}
 
-		void setBoard(int *intBoard) {
-			int i;
-			for (i = 0; i < N; i++) {
-				int j;
-				for (j = 0; j < N; j++) {
-					if (intBoard[i * N + j] == 0) {
-						board[i * N + j] = new Unit(i, j, calculateSection(i, j), intBoard[i * N + j], true);
-					} else {
-						board[i * N + j] = new Unit(i, j, calculateSection(i, j), intBoard[i * N + j], false);
-					}
-				}
-			}
-		}
-	
+		// void setBoard(int *intBoard) {
+		// 	int i;
+		// 	for (i = 0; i < N; i++) {
+		// 		int j;
+		// 		for (j = 0; j < N; j++) {
+		// 			if (intBoard[i * N + j] == 0) {
+		// 				board[i * N + j] = new Unit(i, j, calculateSection(i, j), intBoard[i * N + j], true);
+		// 			} else {
+		// 				board[i * N + j] = new Unit(i, j, calculateSection(i, j), intBoard[i * N + j], false);
+		// 			}
+		// 		}
+		// 	}
+		// }
+
+		// void setRows() {
+		// 	int i;
+		// 	for (i = 0; i < N; i++) {
+		// 		Row *row = new Row();
+		// 		rows[i] = row;
+		// 		int j;
+		// 		for (j = 0; j < N; j++) {
+		// 			rows[i]->insert(j, board[i * N + j]);
+		// 		}
+		// 	}
+		// }
+
+		// void setColumns() {
+		// 	int k;
+		// 	for (k = 0; k < N; k++) {
+		// 		Column *column = new Column();
+		// 		columns[k] = column;
+		// 	}
+		// 	int i;
+		// 	for (i = 0; i < N; i++) {
+		// 		int j;
+		// 		for (j = 0; j < N; j++) {
+		// 			columns[j]->insert(i, board[i * N + j]);
+		// 		}
+		// 	}
+		// }
+
+		// int calculateSection(int i, int j) {
+		// 	return (i / SQRT_N) * SQRT_N + (j / SQRT_N);
+		// }
+
+		// void setSections() {
+		// 	int k;
+		// 	for (k = 0; k < N; k++) {
+		// 		Section *section = new Section();
+		// 		sections[k] = section;
+		// 	}
+		// 	cout << "Setup sections" << endl;
+		// 	int i;
+		// 	for (i = 0; i < N; i++) {
+		// 		int j;
+		// 		for (j = 0; j < N; j++) {
+		// 			int currentSection = calculateSection(i, j);
+		// 			sections[currentSection]->insert(j, i, board[i * N + j]);
+		// 		}
+		// 		cout << "Populated one section" << endl;
+		// 	}
+		// }
+
 	public:
 		Sudoku(int *intBoard) {
 			setBoard(intBoard);
@@ -329,9 +472,9 @@ class Sudoku {
 			} else if (!board[y * N + x]->getMutability()) {
 				throw immutableUnitException;
 			} else if (!isValid(x, y, value)) {
-				bool isValidRow = getRows()[y]->isValid(x, value);
-				bool isValidColumn = getColumns()[x]->isValid(y, value);
-				bool isValidSection = sections[calculateSection(y, x)]->isValid(x, y, value);
+				bool isValidRow = getRows()[y]->isValid(value);
+				bool isValidColumn = getColumns()[x]->isValid(value);
+				bool isValidSection = getSections()[calculateSection(y, x)]->isValid(value);
 				if (!isValidRow) {
 					throw rowInvariantException;
 				} else if (!isValidColumn) {
@@ -340,24 +483,24 @@ class Sudoku {
 					throw sectionInvariantException;
 				}
 			}
-			cout << "Before Insert" << endl;
+			getRows()[y]->remove(board[y * N + x]->getValue());
+			getColumns()[x]->remove(board[y * N + x]->getValue());
+			getSections()[calculateSection(y, x)]->remove(board[y * N + x]->getValue());
+			
 			board[y * N + x]->setValue(value);
-			cout << "After Setting Value" << endl;
-			getRows()[y]->insert(x, board[y * N + x]);
-			cout << "After Row Insert" << endl;
-			getColumns()[x]->insert(y, board[y * N + x]);
-			cout << "After Column Insert" << endl;
-			getSections()[calculateSection(y, x)]->insert(x, y, board[y * N + x]);
-			cout << "After Section Insert" << endl;
+
+			getRows()[y]->insert(board[y * N + x]->getValue());
+			getColumns()[x]->insert(board[y * N + x]->getValue());
+			getSections()[calculateSection(y, x)]->insert(board[y * N + x]->getValue());
 		}
 
 		bool isValid(int x, int y, int value) {
-			bool isValidRow = getRows()[y]->isValid(x, value);
-			bool isValidColumn = getColumns()[x]->isValid(y, value);
-			bool isValidSection = sections[calculateSection(y, x)]->isValid(x, y, value);
-			cout << "isValidRow: " << isValidRow << '\n';
-			cout << "isValidColumn: " << isValidColumn << '\n';
-			cout << "isValidSection: " << isValidSection << '\n';
+			bool isValidRow = getRows()[y]->isValid(value);
+			bool isValidColumn = getColumns()[x]->isValid(value);
+			bool isValidSection = sections[calculateSection(y, x)]->isValid(value);
+			cout << "isValidRow: " << isValidRow << endl;
+			cout << "isValidColumn: " << isValidColumn << endl;
+			cout << "isValidSection: " << isValidSection << endl;
 			return isValidRow && isValidColumn && isValidSection;
 		}
 
@@ -373,6 +516,60 @@ class Sudoku {
 			}
 			return true;
 		}
+
+		// void insert(int x, int y, int value) {
+		// 	if (x >= N || y >= N || x < 0 || y < 0) {
+		// 		throw positionOutOfBoundsException;
+		// 	} else if (value < 0 || value > N) {
+		// 		throw valueOutOfBoundsException;
+		// 	} else if (!board[y * N + x]->getMutability()) {
+		// 		throw immutableUnitException;
+		// 	} else if (!isValid(x, y, value)) {
+		// 		bool isValidRow = getRows()[y]->isValid(x, value);
+		// 		bool isValidColumn = getColumns()[x]->isValid(y, value);
+		// 		bool isValidSection = getSections()[calculateSection(y, x)]->isValid(x, y, value);
+		// 		if (!isValidRow) {
+		// 			throw rowInvariantException;
+		// 		} else if (!isValidColumn) {
+		// 			throw columnInvariantException;
+		// 		} else if (!isValidSection) {
+		// 			throw sectionInvariantException;
+		// 		}
+		// 	}
+		// 	cout << "Before Insert" << endl;
+			
+		// 	cout << "After Setting Value" << endl;
+		// 	getRows()[y]->insert(x, board[y * N + x]);
+		// 	cout << "After Row Insert" << endl;
+		// 	getColumns()[x]->insert(y, board[y * N + x]);
+		// 	cout << "After Column Insert" << endl;
+		// 	getSections()[calculateSection(y, x)]->insert(x, y, board[y * N + x]);
+		// 	cout << "After Section Insert" << endl;
+		// 	board[y * N + x]->setValue(value);
+		// }
+
+		// bool isValid(int x, int y, int value) {
+		// 	bool isValidRow = getRows()[y]->isValid(x, value);
+		// 	bool isValidColumn = getColumns()[x]->isValid(y, value);
+		// 	bool isValidSection = sections[calculateSection(y, x)]->isValid(x, y, value);
+		// 	cout << "isValidRow: " << isValidRow << endl;
+		// 	cout << "isValidColumn: " << isValidColumn << endl;
+		// 	cout << "isValidSection: " << isValidSection << endl;
+		// 	return isValidRow && isValidColumn && isValidSection;
+		// }
+
+		// bool isComplete() {
+		// 	int i;
+		// 	for (i = 0; i < N; i++) {
+		// 		int j;
+		// 		for (j = 0; j < N; j++) {
+		// 			if (board[i * N + j]->getValue() == 0) {
+		// 				return false;
+		// 			}
+		// 		}
+		// 	}
+		// 	return true;
+		// }
 };
 
 //typedef SDL_Texture* Texture;
