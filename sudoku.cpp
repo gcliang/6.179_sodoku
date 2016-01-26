@@ -379,29 +379,106 @@ class Sudoku {
 		}
 };
 
-void print_board(Sudoku *board) {
-	int row;
+typedef SDL_Texture* Texture;
+
+SDL_Renderer* renderer;
+
+Texture number_0_image, number_1_image, number_2_image, number_3_image, number_4_image,
+		number_5_image, number_6_image, number_7_image, number_8_image, number_9_image;
+
+unsigned BOX_GAP = 6;
+unsigned BOX_WIDTH = 60;
+unsigned BOX_HEIGHT = 60;
+unsigned WINDOW_WIDTH = BOX_WIDTH * 10 + 2 * BOX_GAP;
+unsigned WINDOW_HEIGHT = BOX_HEIGHT * 10 + 2 * BOX_GAP;
+
+Texture loadImage(char* image) {
+   SDL_Surface *loadedImage = IMG_Load(image);
+   if(!loadedImage) {
+      cout << "Failed to load image: " << SDL_GetError() << endl;
+      SDL_Quit();
+      exit(1);
+   }
+   Texture texture = SDL_CreateTextureFromSurface(renderer, loadedImage);
+   SDL_FreeSurface(loadedImage);
+   if(!texture) {
+      cout << "Failed to create texture: " << SDL_GetError() << endl;
+      SDL_Quit();
+      exit(1);
+   }
+   return texture;
+}
+
+void displayTexture(Texture t, unsigned x, unsigned y, unsigned width, unsigned height, SDL_RendererFlip flip){
+   SDL_Rect tex_size;
+   tex_size.x = 0;
+   tex_size.y = 0;
+   SDL_Rect toplace;
+   toplace.x = x;
+   toplace.y = y;
+   toplace.w = width;
+   toplace.h = height;
+   SDL_QueryTexture(t, NULL, NULL, &tex_size.w, &tex_size.h);
+   SDL_RenderCopyEx(renderer,t,&tex_size,&toplace,0,NULL,flip);
+}
+
+void print_board(Sudoku *board, Texture n[10], SDL_Rect rects[N*N]) {
+	int r, c;
 	Row *cur;
-	cout << "-----------" << endl;
-	for (row = 0; row < N; row++) {
-		cur = board->getRows()[row];
+	for (r = 0; r < N; r++) {
+		cur = board->getRows()[r];
 		Unit **vals;
 		vals = (cur->getUnits());
-		int col;
-		for (col = 0; col < N; col++) {
-			cout << vals[col]->getValue();
-			if ((col+1) % SQRT_N == 0) {
-				cout << " "; // Add horizontal space between sections
-			}
-		}
-		cout << "\n";
-		if ((row+1) % SQRT_N ==0) {
-			cout << endl; // Add vertical space between sections
+		int value, box_num;
+		for (c = 0; c < N; c++) {
+			value = vals[c]->getValue();
+			box_num = (r * N) + c;
+			displayTexture(n[value], rects[box_num].x, rects[box_num].y, BOX_WIDTH, BOX_HEIGHT, SDL_FLIP_NONE);
 		}
 	}
 }
 
-int sudoku_main() {
+
+void calculate_section(unsigned m_x, unsigned m_y, SDL_Rect rec[N*N], unsigned coords[2]) {
+	int vert, horz;
+	for (vert = 0; vert < N; vert++) {
+		unsigned left_edge = rec[vert].x;
+		if (m_x >= left_edge && m_x <= (left_edge + BOX_WIDTH)) {
+			coords[0] = vert;
+			break;
+		}
+	}
+	for (horz = 0; horz < N; horz++) {
+		unsigned top_edge = rec[horz*N].y;
+		if (m_y >= top_edge && m_y <= (top_edge + BOX_HEIGHT)) {
+			coords[1] = horz;
+			break;
+		}
+	}
+}
+
+//	int row;
+//	Row *cur;
+//	cout << "-----------" << endl;
+//	for (row = 0; row < N; row++) {
+//		cur = board->getRows()[row];
+//		Unit **vals;
+//		vals = (cur->getUnits());
+//		int col;
+//		for (col = 0; col < N; col++) {
+//			cout << vals[col]->getValue();
+//			if ((col+1) % SQRT_N == 0) {
+//				cout << " "; // Add horizontal space between sections
+//			}
+//		}
+//		cout << "\n";
+//		if ((row+1) % SQRT_N ==0) {
+//			cout << endl; // Add vertical space between sections
+//		}
+//	}
+
+
+Sudoku* sudoku_main() {
 	// Determine desired difficulty
 	cout << "Welcome to Sudoku.  What is your desired difficulty?" << endl << "The options are easy, medium, and hard." << endl;
 	string difficulty;
@@ -486,6 +563,8 @@ int sudoku_main() {
 
 	cout << "Sudoku constructed" << endl;
 
+	return mainBoard;
+	/*
 	cout << "Fill in the 0's with the correct number (1-9) by inputing:" << endl;
 	cout << "x-coordinate y-coordinate digit" << endl;
 	cout << "(0,0) is the top left location" << endl;
@@ -518,143 +597,292 @@ int sudoku_main() {
 	cout << "Congratulations! You solved the puzzle!" << endl;
 	print_board(mainBoard);
 	return 0;
+	*/
 }
 
-typedef SDL_Texture* Texture;
+//typedef SDL_Texture* Texture;
+//
+//unsigned window_x = 800;
+//unsigned window_y = 600;
+//
+//unsigned window_start_x = 200;
+//unsigned window_start_y = 100;
+//
+//char* window_name = "Sudoku";
+//
+//double player1 = 0.5;
+//double player2 = 0.5;
+//double player_height = .15;
+//double player_width  = .03;
+//double player_speed = 0.01;
+//
+//int player1_up = 0;
+//int player2_up = 0;
+//int player1_down = 0;
+//int player2_down = 0;
+//
+//SDL_Renderer *renderer;
+//
+//Texture loadImage(char* image){
+//   SDL_Surface *loadedImage = IMG_Load(image);
+//   if(!loadedImage) {
+//      printf("Failed to load image: %s\n", SDL_GetError() );
+//      SDL_Quit();
+//      exit(1);
+//   }
+//   Texture texture = SDL_CreateTextureFromSurface(renderer, loadedImage);
+//   SDL_FreeSurface(loadedImage);
+//   if(!texture) {
+//      printf("Failed to create texture: %s\n", SDL_GetError() );
+//      SDL_Quit();
+//      exit(1);
+//   }
+//   return texture;
+//}
+//
+//void displayTexture(Texture t, unsigned x, unsigned y, unsigned width, unsigned height, SDL_RendererFlip flip){
+//   SDL_Rect tex_size;
+//   tex_size.x = 0;
+//   tex_size.y = 0;
+//   SDL_Rect toplace;
+//   toplace.x = x;
+//   toplace.y = y;
+//   toplace.w = width;
+//   toplace.h = height;
+//   SDL_QueryTexture(t, NULL, NULL, &tex_size.w, &tex_size.h);
+//   SDL_RenderCopyEx(renderer,t,&tex_size,&toplace,0,NULL,flip);
+//}
+//
+//Texture background_image, player_image;
+//
+//int main(int argc, char* argv[] ){
+//   if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
+//      printf("SDL_Init failed: %s\n", SDL_GetError());
+//      return 1;
+//   }
+//
+//   SDL_Window *window = SDL_CreateWindow(window_name,window_start_x,window_start_y, window_x,window_y,SDL_WINDOW_SHOWN);
+//   if (!window){
+//      printf("Window creation failed: %s\n", SDL_GetError());
+//      SDL_Quit();
+//      return 1;
+//   }
+//
+//   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+//   if (!renderer){
+//      printf("Renderer creation failed: %s\n", SDL_GetError());
+//      SDL_Quit();
+//      return 1;
+//   }
+//
+//   if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 ) {
+//        printf("Audio creation failed %s\n", Mix_GetError());
+//        return 1;
+//   }
+//
+//   Mix_Chunk *laser = Mix_LoadWAV("laser.wav");
+//   if(!laser){
+//        printf("Could not open sound effect %s\n", Mix_GetError());
+//   }
+//
+//   background_image = loadImage("snowcow.png");
+//   player_image = loadImage("player_image2.png");
+//
+//   //Our event structure
+//   SDL_Event e;
+//   int quit = 0;
+//   while (!quit){
+//      while (SDL_PollEvent(&e)){
+//         if (e.type == SDL_QUIT) quit = 1;
+//         else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+//            switch(e.key.keysym.sym){
+//               case SDLK_1:
+//                  if(e.type == SDL_KEYDOWN) ; break;
+//               case SDLK_UP:
+//                  player2_down = (e.type == SDL_KEYDOWN); break;
+//               case SDLK_DOWN:
+//                  player2_up = (e.type == SDL_KEYDOWN); break;
+//               case SDLK_w:
+//                  player1_down = (e.type == SDL_KEYDOWN); break;
+//               case SDLK_s:
+//                  player1_up = (e.type == SDL_KEYDOWN); break;
+//            }
+//         }
+//      }
+//
+//      player1+= (player1_up - player1_down) * player_speed;
+//      if(player1 > 1.0 - player_height) player1 = 1.0 - player_height ;
+//      else if(player1 < 0) player1 = 0;
+//
+//      player2+= (player2_up - player2_down) * player_speed;
+//      if(player2 > 1.0 - player_height ) player2 = 1.0 - player_height;
+//      else if(player2 < 0) player2 = 0;
+//
+//
+//      SDL_RenderClear(renderer);
+//
+//      SDL_SetRenderDrawColor(renderer,255,255,255,255);
+//      SDL_Rect rectangle;
+//      rectangle.x = 0;
+//      rectangle.y = 0;
+//      rectangle.w = window_x;
+//      rectangle.h = window_y;
+//      SDL_RenderFillRect(renderer, &rectangle);
+//
+//      displayTexture(background_image, 200, 200, 200, 200, SDL_FLIP_NONE);
+//      displayTexture(player_image, 0, (int)((player1)*window_y),
+//         (int)(player_width*window_x), (int)(player_height*window_y),SDL_FLIP_NONE);
+//      displayTexture(player_image, window_x-(int)(player_width*window_x), (int)((player2)*window_y),
+//         (int)(player_width*window_x), (int)(player_height*window_y),SDL_FLIP_HORIZONTAL);
+//      SDL_RenderPresent(renderer);
+//   }
+//   return 0;
+//}
 
-unsigned window_x = 800;
-unsigned window_y = 600;
+int main(int argc, char* argv[]) {
+	SDL_Window* window;
 
-unsigned window_start_x = 200;
-unsigned window_start_y = 100;
+	// create sudoku board
+	Sudoku* sudoku_board = sudoku_main();
 
-char* window_name = "Sudoku";
+	// Initialize SDL.
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+			return 1;
+	}
 
-double player1 = 0.5;
-double player2 = 0.5;
-double player_height = .15;
-double player_width  = .03;
-double player_speed = 0.01;
+	// Create the window where we will draw.
+	window = SDL_CreateWindow("Sudoku",
+					SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+					WINDOW_WIDTH, WINDOW_HEIGHT,
+					0);
 
-int player1_up = 0;
-int player2_up = 0;
-int player1_down = 0;
-int player2_down = 0;
+	// We must call SDL_CreateRenderer in order for draw calls to affect this window.
+	renderer = SDL_CreateRenderer(window, -1, 0);
 
-SDL_Renderer *renderer;
+	// Declare images
+	number_0_image = loadImage("number_0_blue.png");
+	number_1_image = loadImage("number_1_blue.png");
+	number_2_image = loadImage("number_2_blue.png");
+	number_3_image = loadImage("number_3_blue.png");
+	number_4_image = loadImage("number_4_blue.png");
+	number_5_image = loadImage("number_5_blue.png");
+	number_6_image = loadImage("number_6_blue.png");
+	number_7_image = loadImage("number_7_blue.png");
+	number_8_image = loadImage("number_8_blue.png");
+	number_9_image = loadImage("number_9_blue.png");
 
-Texture loadImage(char* image){
-   SDL_Surface *loadedImage = IMG_Load(image);
-   if(!loadedImage) {
-      printf("Failed to load image: %s\n", SDL_GetError() );
-      SDL_Quit();
-      exit(1);
-   }
-   Texture texture = SDL_CreateTextureFromSurface(renderer, loadedImage);
-   SDL_FreeSurface(loadedImage);
-   if(!texture) {
-      printf("Failed to create texture: %s\n", SDL_GetError() );
-      SDL_Quit();
-      exit(1);
-   }
-   return texture;
-}
+	Texture numbers[10] = {number_0_image, number_1_image, number_2_image, number_3_image, number_4_image, number_5_image, number_6_image,
+							number_7_image, number_8_image, number_9_image};
 
-void displayTexture(Texture t, unsigned x, unsigned y, unsigned width, unsigned height, SDL_RendererFlip flip){
-   SDL_Rect tex_size;
-   tex_size.x = 0;
-   tex_size.y = 0;
-   SDL_Rect toplace;
-   toplace.x = x;
-   toplace.y = y;
-   toplace.w = width;
-   toplace.h = height;
-   SDL_QueryTexture(t, NULL, NULL, &tex_size.w, &tex_size.h);
-   SDL_RenderCopyEx(renderer,t,&tex_size,&toplace,0,NULL,flip);
-}
+	// Select the color for drawing. It is set to white here.
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-Texture background_image, player_image;
+	// Clear the entire screen to our selected color.
+	SDL_RenderClear(renderer);
 
-int main(int argc, char* argv[] ){
-   if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
-      printf("SDL_Init failed: %s\n", SDL_GetError());
-      return 1;
-   }
+	// Draw rectangles
+	SDL_Rect rectangles[81];
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	int row, col;
+	for (row = 0; row < N; row++) {
+		SDL_Rect box;
+		box.y = row * BOX_HEIGHT + row * BOX_GAP + (row/3) * BOX_GAP + BOX_GAP;
+		box.w = BOX_WIDTH;
+		box.h = BOX_HEIGHT;
+		for (col = 0; col < N; col++) {
+			box.x = col * BOX_WIDTH + col * BOX_GAP + (col/3) * BOX_GAP + BOX_GAP;
+			rectangles[row * N + col] = box;
+		}
+	}
 
-   SDL_Window *window = SDL_CreateWindow(window_name,window_start_x,window_start_y, window_x,window_y,SDL_WINDOW_SHOWN);
-   if (!window){
-      printf("Window creation failed: %s\n", SDL_GetError());
-      SDL_Quit();
-      return 1;
-   }
+	SDL_RenderFillRects(renderer, rectangles, N*N);
 
-   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-   if (!renderer){
-      printf("Renderer creation failed: %s\n", SDL_GetError());
-      SDL_Quit();
-      return 1;
-   }
+	// display numbers
+//	int r, c;
+//	Row *cur;
+//	for (r = 0; r < N; r++) {
+//		cur = sudoku_board->getRows()[r];
+//		Unit **vals;
+//		vals = (cur->getUnits());
+//		int c, value, box_num;
+//		Texture *num;
+//		for (c = 0; c < N; c++) {
+//			value = vals[c]->getValue();
+//			box_num = (r * N) + c;
+//			displayTexture(numbers[value], rects[box_num].x, rects[box_num].y, BOX_WIDTH, BOX_HEIGHT, SDL_FLIP_NONE);
+//		}
+//	}
+	print_board(sudoku_board, numbers, rectangles);
 
-   if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 ) {
-        printf("Audio creation failed %s\n", Mix_GetError());
-        return 1;
-   }
+	// Up until now everything was drawn behind the scenes.
+	// This will show the new, red contents of the window.
+	SDL_Event e;
+	int quit = 0;
+//	SDL_StartTextInput();
+	while (!quit) {
+		 while (SDL_PollEvent(&e)){
+			 if (e.type == SDL_QUIT) {
+				 quit = 1;
+			 } else if (e.type == SDL_MOUSEBUTTONDOWN ) {
+				 if (e.button.button == SDL_BUTTON_LEFT) {
+					 unsigned mouse_x, mouse_y, section_x, section_y;
+					 unsigned coordinates[2];
+					 mouse_x = e.button.x;
+					 mouse_y = e.button.y;
+					 cout << "X:" << mouse_x << " Y:" << mouse_y << endl;
 
-   Mix_Chunk *laser = Mix_LoadWAV("laser.wav");
-   if(!laser){
-        printf("Could not open sound effect %s\n", Mix_GetError());
-   }
+					 calculate_section(mouse_x, mouse_y, rectangles, coordinates);
+					 section_x = coordinates[0];
+					 section_y = coordinates[1];
+					 cout << "You have chosen section (" << section_x << ", " << section_y << "). Is this correct (y/n)?" << endl;
+					 string response;
+					 getline(cin, response);
+					 if (response == "n") {
+						 break;
+					 }
 
-   background_image = loadImage("snowcow.png");
-   player_image = loadImage("player_image2.png");
+					 // Read in digit
+					 cout << "Desired digit?:" << endl;
+					 string input;
+					 int digit;
+					 getline(cin, input);
 
-   //Our event structure
-   SDL_Event e;
-   int quit = 0;
-   while (!quit){
-      while (SDL_PollEvent(&e)){
-         if (e.type == SDL_QUIT) quit = 1;
-         else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
-            switch(e.key.keysym.sym){
-               case SDLK_1:
-                  if(e.type == SDL_KEYDOWN) Mix_PlayChannel( -1, laser, 0 ); break;
-               case SDLK_UP:
-                  player2_down = (e.type == SDL_KEYDOWN); break;
-               case SDLK_DOWN:
-                  player2_up = (e.type == SDL_KEYDOWN); break;
-               case SDLK_w:
-                  player1_down = (e.type == SDL_KEYDOWN); break;
-               case SDLK_s:
-                  player1_up = (e.type == SDL_KEYDOWN); break;
-            }
-         }
-      }
+					 stringstream ss(input);
+					 ss >> digit;
 
-      player1+= (player1_up - player1_down) * player_speed;
-      if(player1 > 1.0 - player_height) player1 = 1.0 - player_height ;
-      else if(player1 < 0) player1 = 0;
+					 try {
+					 	 sudoku_board->insert(section_x, section_y, digit);
+					 } catch (const OutOfBoundsException& o) {
+						 cout << o.what() << endl;
+					 } catch (const SudokuInvariantException& s) {
+						 cout << s.what() << endl;
+					 } catch (const ImmutableUnitException& i) {
+						 cout << i.what() << endl;
+					 }
 
-      player2+= (player2_up - player2_down) * player_speed;
-      if(player2 > 1.0 - player_height ) player2 = 1.0 - player_height;
-      else if(player2 < 0) player2 = 0;
+					 print_board(sudoku_board, numbers, rectangles);
+				 }
+			 }
+//			 else if (SDL_PollEvent(&e)) {
+//				 switch (e.type) {
+//				 case SDL_TEXTINPUT:
+//					 test = test + e.text.text;
+//					 break;
+//				 case SDL_TEXTEDITING:
+//					 composition = e.edit.text;
+//				 }
+//			 }
+//		 }
+//		 if (test != "") {
+//			 cout << test << endl;
+//			 cout << composition << endl;
+		 }
+		 SDL_RenderPresent(renderer);
+	}
+	// Give us time to see the window.
+	//        SDL_Delay(1000);
 
-
-      SDL_RenderClear(renderer);
-
-      SDL_SetRenderDrawColor(renderer,255,255,255,255);
-      SDL_Rect rectangle;
-      rectangle.x = 0;
-      rectangle.y = 0;
-      rectangle.w = window_x;
-      rectangle.h = window_y;
-      SDL_RenderFillRect(renderer, &rectangle);
-
-      displayTexture(background_image, 200, 200, 200, 200, SDL_FLIP_NONE);
-      displayTexture(player_image, 0, (int)((player1)*window_y),
-         (int)(player_width*window_x), (int)(player_height*window_y),SDL_FLIP_NONE);
-      displayTexture(player_image, window_x-(int)(player_width*window_x), (int)((player2)*window_y),
-         (int)(player_width*window_x), (int)(player_height*window_y),SDL_FLIP_HORIZONTAL);
-      SDL_RenderPresent(renderer);
-   }
-   return 0;
+	// Always be sure to clean up
+	//		SDL_Quit();
+	return 0;
 }
