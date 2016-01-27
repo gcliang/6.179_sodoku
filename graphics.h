@@ -6,4 +6,4 @@ Texture loadImage(char* image);
 
 void displayTexture(Texture t, unsigned x, unsigned y, unsigned width, unsigned height, SDL_RendererFlip flip);
 
-int graphics(int argc, char* argv[] );
+int graphics(int argc, char* argv[]);

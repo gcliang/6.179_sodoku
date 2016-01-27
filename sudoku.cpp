@@ -7,9 +7,6 @@
 #include <ctime>
 #include "sudoku.h"
 #include "graphics.h"
-// #include "SDL2/SDL_image.h"
-// #include "SDL2/SDL_mixer.h"
-
 
 using namespace std;
 
@@ -147,7 +144,11 @@ class Row {
 		}
 
 		void remove(int value) {
-			values.erase(values.find(value));
+			set<int>::iterator it;
+			it = values.find(value);
+			if (it != values.end()) {
+				values.erase(values.find(value));
+			}
 		}
 
 		bool isValid(int value) {
@@ -206,7 +207,11 @@ class Column {
 		}
 
 		void remove(int value) {
-			values.erase(values.find(value));
+			set<int>::iterator it;
+			it = values.find(value);
+			if (it != values.end()) {
+				values.erase(values.find(value));
+			}
 		}
 
 		bool isValid(int value) {
@@ -269,7 +274,11 @@ class Section {
 		}
 
 		void remove(int value) {
-			values.erase(values.find(value));
+			set<int>::iterator it;
+			it = values.find(value);
+			if (it != values.end()) {
+				values.erase(values.find(value));
+			}
 		}
 
 		bool isValid(int value) {
@@ -373,7 +382,6 @@ class Sudoku {
 					int currentSection = calculateSection(i, j);
 					sections[currentSection]->insert(board[i * N + j]->getValue());
 				}
-				cout << "Populated one section" << endl;
 			}
 		}
 
@@ -443,13 +451,9 @@ class Sudoku {
 	public:
 		Sudoku(int *intBoard) {
 			setBoard(intBoard);
-			cout << "Board set" << endl;
 			setRows();
-			cout << "Rows set" << endl;
 			setColumns();
-			cout << "Columns set" << endl;
 			setSections();
-			cout << "Sections set" << endl;
 		}
 
 		Row **getRows() {
@@ -487,30 +491,22 @@ class Sudoku {
 					throw sectionInvariantException;
 				}
 			}
-			cout << "HERE" << endl;
 			getRows()[y]->remove(board[y * N + x]->getValue());
-			cout << "HERE1" << endl;
 			getColumns()[x]->remove(board[y * N + x]->getValue());
-			cout << "HERE2" << endl;
 			getSections()[calculateSection(y, x)]->remove(board[y * N + x]->getValue());
-			cout << "HERE3" << endl;
 			board[y * N + x]->setValue(value);
-			cout << "HERE4" << endl;
 			getRows()[y]->insert(board[y * N + x]->getValue());
-			cout << "HERE5" << endl;
 			getColumns()[x]->insert(board[y * N + x]->getValue());
-			cout << "HERE6" << endl;
 			getSections()[calculateSection(y, x)]->insert(board[y * N + x]->getValue());
-			cout << "HERE7" << endl;
 		}
 
 		bool isValid(int x, int y, int value) {
 			bool isValidRow = getRows()[y]->isValid(value);
 			bool isValidColumn = getColumns()[x]->isValid(value);
 			bool isValidSection = sections[calculateSection(y, x)]->isValid(value);
-			cout << "isValidRow: " << isValidRow << endl;
-			cout << "isValidColumn: " << isValidColumn << endl;
-			cout << "isValidSection: " << isValidSection << endl;
+//			cout << "isValidRow: " << isValidRow << endl;
+//			cout << "isValidColumn: " << isValidColumn << endl;
+//			cout << "isValidSection: " << isValidSection << endl;
 			return isValidRow && isValidColumn && isValidSection;
 		}
 
@@ -587,7 +583,8 @@ typedef SDL_Texture* Texture;
 SDL_Renderer* renderer;
 
 Texture number_0_image, number_1_image, number_2_image, number_3_image, number_4_image,
-		number_5_image, number_6_image, number_7_image, number_8_image, number_9_image;
+		number_5_image, number_6_image, number_7_image, number_8_image, number_9_image,
+		congratulations_image;
 
 unsigned BOX_GAP = 6;
 unsigned BOX_WIDTH = 60;
@@ -831,6 +828,8 @@ int main(int argc, char* argv[]) {
 	// create sudoku board
 	Sudoku* sudoku_board = sudoku_main();
 
+	cout << "Click on the desired tile to input digits." << endl;
+
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 			return 1;
@@ -856,6 +855,7 @@ int main(int argc, char* argv[]) {
 	number_7_image = loadImage("number_7_blue.png");
 	number_8_image = loadImage("number_8_blue.png");
 	number_9_image = loadImage("number_9_blue.png");
+	congratulations_image = loadImage("Congratulations.png");
 
 	Texture numbers[10] = {number_0_image, number_1_image, number_2_image, number_3_image, number_4_image, number_5_image, number_6_image,
 							number_7_image, number_8_image, number_9_image};
@@ -890,7 +890,6 @@ int main(int argc, char* argv[]) {
 	// This will show the new, red contents of the window.
 	SDL_Event e;
 	int quit = 0;
-//	SDL_StartTextInput();
 	while (!quit) {
 		 while (SDL_PollEvent(&e)){
 			 if (e.type == SDL_QUIT) {
@@ -902,7 +901,6 @@ int main(int argc, char* argv[]) {
 					 unsigned coordinates[2] = {wrong, wrong};
 					 mouse_x = e.button.x;
 					 mouse_y = e.button.y;
-//					 cout << "X:" << mouse_x << " Y:" << mouse_y << endl;
 
 					 calculate_section(mouse_x, mouse_y, rectangles, coordinates);
 					 if (coordinates[0] == wrong || coordinates[1] == wrong) {
@@ -911,11 +909,11 @@ int main(int argc, char* argv[]) {
 					 }
 					 section_x = coordinates[0];
 					 section_y = coordinates[1];
-					 cout << "You have chosen section (" << section_x << ", " << section_y << "). Is this correct (y/n)?" << endl;
+					 cout << "You have chosen box (" << section_x << ", " << section_y << "). Is this correct (y/n)?" << endl;
 					 string response;
 					 getline(cin, response);
 					 while (response != "n" && response != "y") {
-						 cout << "Invalid choice. (y/n)?" << endl;
+						 cout << "Is box (" << section_x << ", " << section_y << ") correct (y/n)?" << endl;
 						 getline(cin, response);
 					 }
 					 if (response == "n") {
@@ -930,20 +928,28 @@ int main(int argc, char* argv[]) {
 
 					 stringstream ss(input);
 					 ss >> digit;
+					 while (digit > N || digit < 1 ) {
+						 cout << "That digit is invalid. Try again." << endl;
+						 getline(cin, input);
+						 stringstream ss(input);
+						 ss >> digit;
+					 }
 
 					 try {
 					 	 sudoku_board->insert(section_x, section_y, digit);
 					 } catch (const OutOfBoundsException& o) {
 						 cout << o.what() << endl;
 					 } catch (const SudokuInvariantException& s) {
-						 cout << s.what() << endl;
+						 cout << s.what() << endl << "Click on a tile to continue." << endl;
 					 } catch (const ImmutableUnitException& i) {
-						 cout << i.what() << endl;
+						 cout << i.what() << endl << "Click on a tile to continue." << endl;
 					 }
 
 					 print_board(sudoku_board, numbers, rectangles);
 					 if (sudoku_board->isComplete()) {
 						 cout << "Congratulations! You solved the puzzle!" << endl;
+						 displayTexture(congratulations_image, (int) (0.2 * WINDOW_WIDTH), (int) (0,2 * WINDOW_HEIGHT), (int) (0.6 * WINDOW_WIDTH),
+								 (int) (0.6 * WINDOW_HEIGHT), SDL_FLIP_NONE);
 						 quit = 1;
 					 }
 				 }
