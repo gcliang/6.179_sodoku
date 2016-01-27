@@ -632,10 +632,8 @@ void print_board(Sudoku *board, Texture n[10], SDL_Rect rects[N*N]) {
 		int value, box_num;
 		for (c = 0; c < N; c++) {
 			value = vals[c]->getValue();
-			if (value != 0) {
-				box_num = (r * N) + c;
-				displayTexture(n[value], rects[box_num].x, rects[box_num].y, BOX_WIDTH, BOX_HEIGHT, SDL_FLIP_NONE);
-			}
+			box_num = (r * N) + c;
+			displayTexture(n[value], rects[box_num].x, rects[box_num].y, BOX_WIDTH, BOX_HEIGHT, SDL_FLIP_NONE);
 		}
 	}
 
@@ -917,18 +915,19 @@ int main(int argc, char* argv[]) {
 						 getline(cin, response);
 					 }
 					 if (response == "n") {
+						 cout << "Continue by clicking on more boxes." << endl;
 						 break;
 					 }
 
 					 // Read in digit
-					 cout << "Desired digit?:" << endl;
+					 cout << "Desired digit? Use 0 to clear the box:" << endl;
 					 string input;
 					 int digit;
 					 getline(cin, input);
 
 					 stringstream ss(input);
 					 ss >> digit;
-					 while (digit > N || digit < 1 ) {
+					 while (digit > N || digit < 0 ) {
 						 cout << "That digit is invalid. Try again." << endl;
 						 getline(cin, input);
 						 stringstream ss(input);
@@ -948,7 +947,7 @@ int main(int argc, char* argv[]) {
 					 print_board(sudoku_board, numbers, rectangles);
 					 if (sudoku_board->isComplete()) {
 						 cout << "Congratulations! You solved the puzzle!" << endl;
-						 displayTexture(congratulations_image, (int) (0.2 * WINDOW_WIDTH), (int) (0,2 * WINDOW_HEIGHT), (int) (0.6 * WINDOW_WIDTH),
+						 displayTexture(congratulations_image, (int) (0.2 * WINDOW_WIDTH), (int) (0.2 * WINDOW_HEIGHT), (int) (0.6 * WINDOW_WIDTH),
 								 (int) (0.6 * WINDOW_HEIGHT), SDL_FLIP_NONE);
 						 quit = 1;
 					 }
@@ -957,10 +956,10 @@ int main(int argc, char* argv[]) {
 		 }
 		 SDL_RenderPresent(renderer);
 	}
-	// Give us time to see the window.
-	//        SDL_Delay(1000);
-
-	// Always be sure to clean up
-	SDL_Quit();
+//	// Give us time to see the window.
+//	SDL_Delay(3000);
+//
+//	// Always be sure to clean up
+//	SDL_Quit();
 	return 0;
 }
