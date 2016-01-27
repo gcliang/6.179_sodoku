@@ -7,8 +7,7 @@
 #include <ctime>
 #include "sudoku.h"
 #include "graphics.h"
-// #include "SDL2/SDL_image.h"
-// #include "SDL2/SDL_mixer.h"
+// #FrmL_mixer.h"
 
 
 using namespace std;
