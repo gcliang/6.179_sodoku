@@ -1,5 +1,5 @@
-#include "SDL2/SDL_image.h"
-// #include "/Library/Frameworks/SDL2.framework/Headers/SDL_image.h"
+// #include "SDL2/SDL_image.h"
+#include "/Library/Frameworks/SDL2.framework/Headers/SDL_image.h"
 
 typedef SDL_Texture* Texture;
 
