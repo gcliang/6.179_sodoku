@@ -949,7 +949,6 @@ int main(int argc, char* argv[]) {
 						 cout << "Congratulations! You solved the puzzle!" << endl;
 						 displayTexture(congratulations_image, (int) (0.2 * WINDOW_WIDTH), (int) (0.2 * WINDOW_HEIGHT), (int) (0.6 * WINDOW_WIDTH),
 								 (int) (0.6 * WINDOW_HEIGHT), SDL_FLIP_NONE);
-						 quit = 1;
 					 }
 				 }
 			 }
