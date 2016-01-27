@@ -7,8 +7,6 @@
 #include <ctime>
 #include "sudoku.h"
 #include "graphics.h"
-// #FrmL_mixer.h"
-
 
 using namespace std;
 
@@ -146,7 +144,11 @@ class Row {
 		}
 
 		void remove(int value) {
-			values.erase(values.find(value));
+			set<int>::iterator it;
+			it = values.find(value);
+			if (it != values.end()) {
+				values.erase(values.find(value));
+			}
 		}
 
 		bool isValid(int value) {
@@ -205,7 +207,11 @@ class Column {
 		}
 
 		void remove(int value) {
-			values.erase(values.find(value));
+			set<int>::iterator it;
+			it = values.find(value);
+			if (it != values.end()) {
+				values.erase(values.find(value));
+			}
 		}
 
 		bool isValid(int value) {
@@ -268,7 +274,11 @@ class Section {
 		}
 
 		void remove(int value) {
-			values.erase(values.find(value));
+			set<int>::iterator it;
+			it = values.find(value);
+			if (it != values.end()) {
+				values.erase(values.find(value));
+			}
 		}
 
 		bool isValid(int value) {
