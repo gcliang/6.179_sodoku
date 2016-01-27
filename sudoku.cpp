@@ -487,15 +487,21 @@ class Sudoku {
 					throw sectionInvariantException;
 				}
 			}
+			cout << "HERE" << endl;
 			getRows()[y]->remove(board[y * N + x]->getValue());
+			cout << "HERE1" << endl;
 			getColumns()[x]->remove(board[y * N + x]->getValue());
+			cout << "HERE2" << endl;
 			getSections()[calculateSection(y, x)]->remove(board[y * N + x]->getValue());
-			
+			cout << "HERE3" << endl;
 			board[y * N + x]->setValue(value);
-
+			cout << "HERE4" << endl;
 			getRows()[y]->insert(board[y * N + x]->getValue());
+			cout << "HERE5" << endl;
 			getColumns()[x]->insert(board[y * N + x]->getValue());
+			cout << "HERE6" << endl;
 			getSections()[calculateSection(y, x)]->insert(board[y * N + x]->getValue());
+			cout << "HERE7" << endl;
 		}
 
 		bool isValid(int x, int y, int value) {
